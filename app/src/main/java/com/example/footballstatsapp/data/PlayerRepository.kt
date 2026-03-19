@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 
 object PlayerRepository {
 
-    suspend fun get_best_qbs(): List<Quarterbacks> {
+    suspend fun get_qbs(): List<Quarterbacks> {
         return withContext(Dispatchers.IO) {
             val qb_list = mutableListOf<Quarterbacks>()
             try {
@@ -19,8 +19,8 @@ object PlayerRepository {
                     qb_list.add(Quarterbacks(
                         name = row.select(".d3-o-player-fullname").text(),
                         team = row.select(".d3.-o-player-team").text(),
-                        passing_yards = row.select("td:nth-child(7)").text(),
-                        passing_touchdowns = row.select("td:nth-child(7)").text()
+                        passing_touchdowns = row.select("td:nth-child(7)").text(),
+                        passing_yards = row.select("td:nth-child(7)").text()
                     ))
                 }
             } catch (e: Exception) {

@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         favoritesButton.setOnClickListener {
             Toast.makeText(
                 this,
-                "Favorite Players page coming soon",
+                "Leaderboards page coming soon",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
         recentButton.setOnClickListener {
             Toast.makeText(
                 this,
-                "Recent Searches page coming soon",
+                "Player Profiles page coming soon",
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
         browseTeamsButton.setOnClickListener {
             Toast.makeText(
                 this,
-                "Browse Teams page coming soon",
+                "Player Comparisons page coming soon",
                 Toast.LENGTH_SHORT
             ).show()
         }

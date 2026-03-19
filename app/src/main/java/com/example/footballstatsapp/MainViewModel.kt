@@ -19,7 +19,7 @@ class MainViewModel : ViewModel() {
 
     fun load_stats() {
         viewModelScope.launch {
-            _players.value = PlayerRepository.get_best_qbs()
+            _players.value = PlayerRepository.get_qbs()
         }
     }
 
