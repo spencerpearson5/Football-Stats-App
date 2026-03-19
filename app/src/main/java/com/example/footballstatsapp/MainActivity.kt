@@ -6,6 +6,13 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
+//Chris Imports
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
+
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var searchEditText: EditText
@@ -14,9 +21,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var recentButton: Button
     private lateinit var browseTeamsButton: Button
 
+    private lateinit var viewModel: MainViewModel
+    private lateinit var player_adapter: PlayerAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+        val recycler_view: RecyclerView = findViewById(R.id.recyclerView)
+        player_adapter = PlayerAdapter(emptyList())
+        recycler_view.adapter = player_adapter
+        viewModel.load_stats()
 
         searchEditText = findViewById(R.id.searchEditText)
         searchButton = findViewById(R.id.searchButton)
@@ -39,6 +55,12 @@ class MainActivity : AppCompatActivity() {
                     "Searching for $playerName",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModel.players.collect { player_list ->
+                player_adapter.update_data(player_list)
             }
         }
 
