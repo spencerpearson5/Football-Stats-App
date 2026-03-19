@@ -1,0 +1,69 @@
+package com.example.footballstatsapp
+
+import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+
+class MainActivity : AppCompatActivity() {
+
+    private lateinit var searchEditText: EditText
+    private lateinit var searchButton: Button
+    private lateinit var favoritesButton: Button
+    private lateinit var recentButton: Button
+    private lateinit var browseTeamsButton: Button
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        searchEditText = findViewById(R.id.searchEditText)
+        searchButton = findViewById(R.id.searchButton)
+        favoritesButton = findViewById(R.id.favoritesButton)
+        recentButton = findViewById(R.id.recentButton)
+        browseTeamsButton = findViewById(R.id.browseTeamsButton)
+
+        searchButton.setOnClickListener {
+            val playerName = searchEditText.text.toString().trim()
+
+            if (playerName.isEmpty()) {
+                Toast.makeText(
+                    this,
+                    "Please enter a player name",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                Toast.makeText(
+                    this,
+                    "Searching for $playerName",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+
+        favoritesButton.setOnClickListener {
+            Toast.makeText(
+                this,
+                "Favorite Players page coming soon",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        recentButton.setOnClickListener {
+            Toast.makeText(
+                this,
+                "Recent Searches page coming soon",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        browseTeamsButton.setOnClickListener {
+            Toast.makeText(
+                this,
+                "Browse Teams page coming soon",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+}
