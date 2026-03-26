@@ -5,40 +5,36 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
-//Chris Imports
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
-
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var searchEditText: EditText
     private lateinit var searchButton: Button
-    private lateinit var favoritesButton: Button
-    private lateinit var recentButton: Button
-    private lateinit var browseTeamsButton: Button
+    private lateinit var bottomNavigation: BottomNavigationView
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var player_adapter: PlayerAdapter
+    private lateinit var playerAdapter: PlayerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-        val recycler_view: RecyclerView = findViewById(R.id.recyclerView)
-        player_adapter = PlayerAdapter(emptyList())
-        recycler_view.adapter = player_adapter
-        viewModel.load_stats()
+
+        val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
+        playerAdapter = PlayerAdapter(emptyList())
+        recyclerView.adapter = playerAdapter
 
         searchEditText = findViewById(R.id.searchEditText)
         searchButton = findViewById(R.id.searchButton)
-        favoritesButton = findViewById(R.id.favoritesButton)
-        recentButton = findViewById(R.id.recentButton)
-        browseTeamsButton = findViewById(R.id.browseTeamsButton)
+        bottomNavigation = findViewById(R.id.bottomNavigation)
+
+        viewModel.load_stats()
 
         searchButton.setOnClickListener {
             val playerName = searchEditText.text.toString().trim()
@@ -59,33 +55,48 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.players.collect { player_list ->
-                player_adapter.update_data(player_list)
+            viewModel.players.collect { playerList ->
+                playerAdapter.update_data(playerList)
             }
         }
 
-        favoritesButton.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Leaderboards page coming soon",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        bottomNavigation.selectedItemId = R.id.nav_home
 
-        recentButton.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Player Profiles page coming soon",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+        bottomNavigation.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    true
+                }
 
-        browseTeamsButton.setOnClickListener {
-            Toast.makeText(
-                this,
-                "Player Comparisons page coming soon",
-                Toast.LENGTH_SHORT
-            ).show()
+                R.id.nav_leaderboards -> {
+                    Toast.makeText(
+                        this,
+                        "Leaderboards page coming soon",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    true
+                }
+
+                R.id.nav_players -> {
+                    Toast.makeText(
+                        this,
+                        "Players page coming soon",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    true
+                }
+
+                R.id.nav_compare -> {
+                    Toast.makeText(
+                        this,
+                        "Compare page coming soon",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    true
+                }
+
+                else -> false
+            }
         }
     }
 }
