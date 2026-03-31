@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.footballstatsapp.datamodel.Quarterbacks
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
+import android.content.Intent
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,13 +54,20 @@ class MainActivity : AppCompatActivity() {
 
         searchEditText.setOnItemClickListener { parent, _, position, _ ->
             val selectedName = parent.getItemAtPosition(position).toString()
-            filterPlayers(selectedName)
 
-            Toast.makeText(
-                this,
-                "Selected $selectedName",
-                Toast.LENGTH_SHORT
-            ).show()
+            val selectedPlayer = allPlayers.find { player ->
+                player.name.equals(selectedName, ignoreCase = true)
+            }
+
+            if (selectedPlayer != null) {
+                openPlayerProfile(selectedPlayer)
+            } else {
+                Toast.makeText(
+                    this,
+                    "Player not found",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         }
 
         searchButton.setOnClickListener {
@@ -149,5 +157,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         playerAdapter.update_data(filteredPlayers)
+    }
+
+    private fun openPlayerProfile(player: Quarterbacks) {
+        val intent = Intent(this, PlayerProfileActivity::class.java)
+
+        intent.putExtra("player_name", player.name)
+        intent.putExtra("team", player.team)
+        intent.putExtra("passing_yards", player.passing_yards)
+        intent.putExtra(
+            "passing_touchdowns",
+            player.passing_touchdowns
+        )
+
+        startActivity(intent)
     }
 }

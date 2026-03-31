@@ -16,6 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FootballStatsApp">
+        <activity android:name=".PlayerProfileActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
