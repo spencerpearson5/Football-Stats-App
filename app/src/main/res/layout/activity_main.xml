@@ -47,16 +47,17 @@
             android:layout_gravity="center_horizontal"
             android:textColor="@android:color/black" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:backgroundTint="#6F4DBF"
             android:hint="Search NFL player"
             android:inputType="text"
             android:minHeight="56dp"
-            android:padding="16dp" />
+            android:padding="16dp"
+            android:dropDownHeight="wrap_content"
+            android:dropDownWidth="match_parent" />
 
         <Button
             android:id="@+id/searchButton"

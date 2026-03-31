@@ -1,10 +1,9 @@
 package com.example.footballstatsapp
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var searchEditText: EditText
+    private lateinit var searchEditText: AutoCompleteTextView
     private lateinit var searchButton: Button
     private lateinit var bottomNavigation: BottomNavigationView
 
@@ -42,31 +41,21 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.players.collect { playerList ->
                 allPlayers = playerList
-                filterPlayers(searchEditText.text.toString())
+                playerAdapter.update_data(allPlayers)
+                setupAutocomplete(allPlayers)
             }
         }
 
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {
-            }
+        searchEditText.setOnItemClickListener { parent, _, position, _ ->
+            val selectedName = parent.getItemAtPosition(position).toString()
+            filterPlayers(selectedName)
 
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-                filterPlayers(s.toString())
-            }
-
-            override fun afterTextChanged(s: Editable?) {
-            }
-        })
+            Toast.makeText(
+                this,
+                "Selected $selectedName",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
 
         searchButton.setOnClickListener {
             val playerName = searchEditText.text.toString().trim()
@@ -126,6 +115,19 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
+
+    private fun setupAutocomplete(players: List<Quarterbacks>) {
+        val playerNames = players.map { it.name }.distinct().sorted()
+
+        val adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_dropdown_item_1line,
+            playerNames
+        )
+
+        searchEditText.setAdapter(adapter)
+        searchEditText.threshold = 1
     }
 
     private fun filterPlayers(query: String) {
