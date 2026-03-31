@@ -1,24 +1,28 @@
 package com.example.footballstatsapp
 
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.example.footballstatsapp.datamodel.Quarterbacks
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var searchEditText: EditText
+    private lateinit var searchEditText: AutoCompleteTextView
     private lateinit var searchButton: Button
     private lateinit var bottomNavigation: BottomNavigationView
 
     private lateinit var viewModel: MainViewModel
     private lateinit var playerAdapter: PlayerAdapter
+
+    private var allPlayers: List<Quarterbacks> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,29 +38,47 @@ class MainActivity : AppCompatActivity() {
         searchButton = findViewById(R.id.searchButton)
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
-        viewModel.load_stats()
+        searchEditText.post {
+            searchEditText.dropDownWidth = searchEditText.width
+        }
+
+
+        lifecycleScope.launch {
+            viewModel.players.collect { playerList ->
+                allPlayers = playerList
+                playerAdapter.update_data(allPlayers)
+                setupAutocomplete(allPlayers)
+            }
+        }
+
+        searchEditText.setOnItemClickListener { parent, _, position, _ ->
+            val selectedName = parent.getItemAtPosition(position).toString()
+            filterPlayers(selectedName)
+
+            Toast.makeText(
+                this,
+                "Selected $selectedName",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
 
         searchButton.setOnClickListener {
             val playerName = searchEditText.text.toString().trim()
 
             if (playerName.isEmpty()) {
+                playerAdapter.update_data(allPlayers)
                 Toast.makeText(
                     this,
-                    "Please enter a player name",
+                    "Showing all players",
                     Toast.LENGTH_SHORT
                 ).show()
             } else {
+                filterPlayers(playerName)
                 Toast.makeText(
                     this,
                     "Searching for $playerName",
                     Toast.LENGTH_SHORT
                 ).show()
-            }
-        }
-
-        lifecycleScope.launch {
-            viewModel.players.collect { playerList ->
-                playerAdapter.update_data(playerList)
             }
         }
 
@@ -98,5 +120,34 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
+
+    private fun setupAutocomplete(players: List<Quarterbacks>) {
+        val playerNames = players.map { it.name }.distinct().sorted()
+
+        val adapter = ArrayAdapter(
+            this,
+            R.layout.dropdown_player_item,
+            R.id.dropdownText,
+            playerNames
+        )
+
+        searchEditText.setAdapter(adapter)
+        searchEditText.threshold = 1
+    }
+
+    private fun filterPlayers(query: String) {
+        val trimmedQuery = query.trim()
+
+        if (trimmedQuery.isEmpty()) {
+            playerAdapter.update_data(allPlayers)
+            return
+        }
+
+        val filteredPlayers = allPlayers.filter { player ->
+            player.name.contains(trimmedQuery, ignoreCase = true)
+        }
+
+        playerAdapter.update_data(filteredPlayers)
     }
 }
