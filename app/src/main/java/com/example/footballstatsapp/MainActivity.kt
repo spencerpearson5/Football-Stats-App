@@ -38,6 +38,11 @@ class MainActivity : AppCompatActivity() {
         searchButton = findViewById(R.id.searchButton)
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
+        searchEditText.post {
+            searchEditText.dropDownWidth = searchEditText.width
+        }
+
+
         lifecycleScope.launch {
             viewModel.players.collect { playerList ->
                 allPlayers = playerList
@@ -122,7 +127,8 @@ class MainActivity : AppCompatActivity() {
 
         val adapter = ArrayAdapter(
             this,
-            android.R.layout.simple_dropdown_item_1line,
+            R.layout.dropdown_player_item,
+            R.id.dropdownText,
             playerNames
         )
 
