@@ -1,5 +1,6 @@
 package com.example.footballstatsapp
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
@@ -8,11 +9,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.footballstatsapp.datamodel.Quarterbacks
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
-import android.content.Intent
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
 
     private lateinit var viewModel: MainViewModel
-    private lateinit var playerAdapter: PlayerAdapter
+    private lateinit var featuredPlayerAdapter: FeaturedPlayerAdapter
 
     private var allPlayers: List<Quarterbacks> = emptyList()
 
@@ -31,9 +32,19 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
-        val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
-        playerAdapter = PlayerAdapter(emptyList())
-        recyclerView.adapter = playerAdapter
+        val featuredRecyclerView: RecyclerView =
+            findViewById(R.id.featuredRecyclerView)
+
+        featuredPlayerAdapter = FeaturedPlayerAdapter(emptyList()) { player ->
+            openPlayerProfile(player)
+        }
+
+        featuredRecyclerView.adapter = featuredPlayerAdapter
+        featuredRecyclerView.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
 
         searchEditText = findViewById(R.id.searchEditText)
         searchButton = findViewById(R.id.searchButton)
@@ -43,11 +54,16 @@ class MainActivity : AppCompatActivity() {
             searchEditText.dropDownWidth = searchEditText.width
         }
 
-
         lifecycleScope.launch {
             viewModel.players.collect { playerList ->
                 allPlayers = playerList
-                playerAdapter.update_data(allPlayers)
+
+                val featuredPlayers = allPlayers
+                    .sortedByDescending { it.passing_touchdowns }
+                    .take(5)
+
+                featuredPlayerAdapter.updateData(featuredPlayers)
+
                 setupAutocomplete(allPlayers)
             }
         }
@@ -74,17 +90,24 @@ class MainActivity : AppCompatActivity() {
             val playerName = searchEditText.text.toString().trim()
 
             if (playerName.isEmpty()) {
-                playerAdapter.update_data(allPlayers)
                 Toast.makeText(
                     this,
-                    "Showing all players",
+                    "Enter a player name",
                     Toast.LENGTH_SHORT
                 ).show()
+                return@setOnClickListener
+            }
+
+            val selectedPlayer = allPlayers.find { player ->
+                player.name.equals(playerName, ignoreCase = true)
+            }
+
+            if (selectedPlayer != null) {
+                openPlayerProfile(selectedPlayer)
             } else {
-                filterPlayers(playerName)
                 Toast.makeText(
                     this,
-                    "Searching for $playerName",
+                    "Player not found",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -94,9 +117,7 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> {
-                    true
-                }
+                R.id.nav_home -> true
 
                 R.id.nav_leaderboards -> {
                     Toast.makeText(
@@ -142,21 +163,6 @@ class MainActivity : AppCompatActivity() {
 
         searchEditText.setAdapter(adapter)
         searchEditText.threshold = 1
-    }
-
-    private fun filterPlayers(query: String) {
-        val trimmedQuery = query.trim()
-
-        if (trimmedQuery.isEmpty()) {
-            playerAdapter.update_data(allPlayers)
-            return
-        }
-
-        val filteredPlayers = allPlayers.filter { player ->
-            player.name.contains(trimmedQuery, ignoreCase = true)
-        }
-
-        playerAdapter.update_data(filteredPlayers)
     }
 
     private fun openPlayerProfile(player: Quarterbacks) {
