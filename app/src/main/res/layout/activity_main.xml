@@ -20,46 +20,46 @@
             android:id="@+id/titleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Football Stats"
-            android:textSize="30sp"
-            android:textStyle="bold"
             android:layout_gravity="center_horizontal"
-            android:textColor="@android:color/black" />
+            android:text="Football Stats"
+            android:textColor="@android:color/black"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/subtitleText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp"
             android:text="Search players, compare stats, and view leaders"
-            android:textSize="15sp"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#666666" />
+            android:textColor="#666666"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/searchLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="32dp"
             android:text="Find a player"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_gravity="center_horizontal"
-            android:textColor="@android:color/black" />
+            android:textStyle="bold" />
 
         <AutoCompleteTextView
             android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
+            android:dropDownHeight="wrap_content"
+            android:dropDownVerticalOffset="8dp"
+            android:dropDownWidth="match_parent"
             android:hint="Search NFL player"
             android:inputType="text"
             android:minHeight="56dp"
             android:padding="16dp"
-            android:dropDownHeight="wrap_content"
-            android:dropDownWidth="match_parent"
-            android:dropDownVerticalOffset="8dp"
-            android:popupBackground="@android:color/white"/>
+            android:popupBackground="@android:color/white" />
 
         <Button
             android:id="@+id/searchButton"
@@ -68,26 +68,28 @@
             android:layout_marginTop="16dp"
             android:minHeight="48dp"
             android:backgroundTint="#1E3A8A"
-            android:textColor="@android:color/white"
-            android:text="Search" />
+            android:text="Search"
+            android:textColor="@android:color/white" />
 
         <TextView
-            android:id="@+id/listLabel"
+            android:id="@+id/featuredLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginBottom="10dp"
             android:text="Featured players"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@android:color/black"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black" />
+            android:textStyle="bold" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/featuredRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            android:layout_height="230dp"
+            android:clipToPadding="false"
+            android:overScrollMode="never"
+            android:paddingEnd="8dp" />
 
     </LinearLayout>
 

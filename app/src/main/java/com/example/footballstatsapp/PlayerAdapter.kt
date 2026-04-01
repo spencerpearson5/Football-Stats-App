@@ -24,7 +24,8 @@ class PlayerAdapter(private var players: List<Quarterbacks>) :
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
         val player = players[position]
         holder.name_text.text = player.name
-        holder.stats_text.text = "${player.team} | Touchdowns: ${player.passing_yards}"
+        holder.stats_text.text =
+            "${player.team} | Passing Yards: ${player.passing_yards}"
     }
 
     override fun getItemCount() = players.size
