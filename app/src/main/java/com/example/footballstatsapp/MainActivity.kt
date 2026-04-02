@@ -33,8 +33,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Note: Global theme is handled in FootballStatsApp class, so no need to call it here.
 
         setContentView(R.layout.activity_main)
 
