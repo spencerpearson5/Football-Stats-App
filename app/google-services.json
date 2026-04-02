@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "593358852715",
+    "project_id": "football-stats-app-f6ecc",
+    "storage_bucket": "football-stats-app-f6ecc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593358852715:android:96a9fc7a7823182c95972e",
+        "android_client_info": {
+          "package_name": "com.example.footballstatsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUnd7g0tIvsleM0YtOmyZbXv41B3CfBrU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

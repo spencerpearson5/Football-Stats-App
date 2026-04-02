@@ -77,6 +77,11 @@ class PlayersActivity : AppCompatActivity() {
                     true
                 }
 
+                R.id.nav_settings -> {
+                    startActivity(Intent(this, SettingsActivity::class.java))
+                    true
+                }
+
                 else -> false
             }
         }

@@ -18,7 +18,12 @@
 
     <item
         android:id="@+id/nav_compare"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@android:drawable/ic_menu_share"
         android:title="Compare" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        android:title="Settings" />
 
 </menu>

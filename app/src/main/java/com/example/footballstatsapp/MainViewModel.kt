@@ -19,6 +19,10 @@ class MainViewModel : ViewModel() {
 
     fun load_stats() {
         viewModelScope.launch {
+            // First, scrape the latest data and update Firestore
+            PlayerRepository.refresh_stats_in_firestore()
+            
+            // Then, fetch the updated data from Firestore and update the UI
             _players.value = PlayerRepository.get_qbs()
         }
     }
