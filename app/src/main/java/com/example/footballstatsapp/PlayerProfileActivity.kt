@@ -2,6 +2,8 @@ package com.example.footballstatsapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.TypedValue
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +21,8 @@ class PlayerProfileActivity : AppCompatActivity() {
         val teamText: TextView = findViewById(R.id.teamText)
         val passingYardsText: TextView = findViewById(R.id.passingYardsText)
         val passingTDText: TextView = findViewById(R.id.passingTDText)
+        val tdValueLabel: TextView = findViewById(R.id.tdValueLabel)
+        val tdBar: View = findViewById(R.id.tdBar)
 
         val playerName = intent.getStringExtra("player_name") ?: "Unknown Player"
         val team = intent.getStringExtra("team") ?: "Unknown Team"
@@ -30,6 +34,31 @@ class PlayerProfileActivity : AppCompatActivity() {
         teamText.text = team
         passingYardsText.text = passingYards
         passingTDText.text = passingTouchdowns
+        tdValueLabel.text = passingTouchdowns
+
+        val tdNumber = passingTouchdowns.toIntOrNull() ?: 0
+
+        // scale one bar based on a max of 60 TDs
+        val maxTouchdowns = 60
+        val minBarHeightDp = 40
+        val maxBarHeightDp = 140
+
+        val scaledHeightDp = if (tdNumber <= 0) {
+            minBarHeightDp
+        } else {
+            minBarHeightDp + ((tdNumber.toFloat() / maxTouchdowns) *
+                    (maxBarHeightDp - minBarHeightDp)).toInt()
+        }
+
+        val scaledHeightPx = TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            scaledHeightDp.toFloat(),
+            resources.displayMetrics
+        ).toInt()
+
+        val layoutParams = tdBar.layoutParams
+        layoutParams.height = scaledHeightPx
+        tdBar.layoutParams = layoutParams
 
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
