@@ -28,6 +28,9 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        ThemeUtils.applyTheme(this)
+
         setContentView(R.layout.activity_main)
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
@@ -172,10 +175,11 @@ class MainActivity : AppCompatActivity() {
         intent.putExtra("player_name", player.name)
         intent.putExtra("team", player.team)
         intent.putExtra("passing_yards", player.passing_yards)
-        intent.putExtra(
-            "passing_touchdowns",
-            player.passing_touchdowns
-        )
+        intent.putExtra("passing_touchdowns", player.passing_touchdowns)
+        intent.putExtra("completions", player.completions)
+        intent.putExtra("attempts", player.attempts)
+        intent.putExtra("completion_percentage", player.completion_percentage)
+        intent.putExtra("interceptions", player.interceptions)
 
         startActivity(intent)
     }

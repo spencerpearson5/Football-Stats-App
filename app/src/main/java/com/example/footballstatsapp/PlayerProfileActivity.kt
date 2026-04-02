@@ -15,25 +15,39 @@ class PlayerProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        ThemeUtils.applyTheme(this)
+
         setContentView(R.layout.activity_player_profile)
 
         val playerNameText: TextView = findViewById(R.id.playerNameText)
         val teamText: TextView = findViewById(R.id.teamText)
         val passingYardsText: TextView = findViewById(R.id.passingYardsText)
         val passingTDText: TextView = findViewById(R.id.passingTDText)
+        val completionsText: TextView = findViewById(R.id.completionsText)
+        val attemptsText: TextView = findViewById(R.id.attemptsText)
+        val compPercentageText: TextView = findViewById(R.id.compPercentageText)
+        val interceptionsText: TextView = findViewById(R.id.interceptionsText)
         val tdValueLabel: TextView = findViewById(R.id.tdValueLabel)
         val tdBar: View = findViewById(R.id.tdBar)
 
         val playerName = intent.getStringExtra("player_name") ?: "Unknown Player"
         val team = intent.getStringExtra("team") ?: "Unknown Team"
         val passingYards = intent.getStringExtra("passing_yards") ?: "N/A"
-        val passingTouchdowns =
-            intent.getStringExtra("passing_touchdowns") ?: "N/A"
+        val passingTouchdowns = intent.getStringExtra("passing_touchdowns") ?: "N/A"
+        val completions = intent.getStringExtra("completions") ?: "N/A"
+        val attempts = intent.getStringExtra("attempts") ?: "N/A"
+        val compPercentage = intent.getStringExtra("completion_percentage") ?: "N/A"
+        val interceptions = intent.getStringExtra("interceptions") ?: "N/A"
 
         playerNameText.text = playerName
         teamText.text = team
         passingYardsText.text = passingYards
         passingTDText.text = passingTouchdowns
+        completionsText.text = completions
+        attemptsText.text = attempts
+        compPercentageText.text = if (compPercentage.contains("%")) compPercentage else "$compPercentage%"
+        interceptionsText.text = interceptions
         tdValueLabel.text = passingTouchdowns
 
         val tdNumber = passingTouchdowns.toIntOrNull() ?: 0

@@ -41,9 +41,13 @@ object PlayerRepository {
                     val qb = Quarterbacks(
                         name = row.select(".d3-o-player-fullname").text().trim(),
                         team = row.select(".d3-o-player-team").text().trim(),
-                        // Column 2 is Pass Yards, Column 7 is Passing TDs
+                        // Column 2: Yards, Column 4: Completions, Column 5: Attempts, Column 6: Pct, Column 7: TD, Column 8: INT
                         passing_yards = row.select("td:nth-child(2)").text().trim(),
-                        passing_touchdowns = row.select("td:nth-child(7)").text().trim()
+                        completions = row.select("td:nth-child(4)").text().trim(),
+                        attempts = row.select("td:nth-child(5)").text().trim(),
+                        completion_percentage = row.select("td:nth-child(6)").text().trim(),
+                        passing_touchdowns = row.select("td:nth-child(7)").text().trim(),
+                        interceptions = row.select("td:nth-child(8)").text().trim()
                     )
                     
                     // Use name as document ID to avoid duplicates
