@@ -36,7 +36,7 @@ class FeaturedPlayerAdapter(
         holder.playerNameTextView.text = player.name
         holder.playerTeamTextView.text = player.team
         holder.playerStatTextView.text =
-            "Pass TDs: ${player.passing_touchdowns}"
+            player.passing_touchdowns.toString()
 
         holder.itemView.setOnClickListener {
             onPlayerClick(player)
