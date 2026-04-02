@@ -59,8 +59,8 @@ class MainActivity : AppCompatActivity() {
                 allPlayers = playerList
 
                 val featuredPlayers = allPlayers
-                    .sortedByDescending { it.passing_touchdowns }
-                    .take(5)
+                    .shuffled()
+                    .take(2)
 
                 featuredPlayerAdapter.updateData(featuredPlayers)
 
