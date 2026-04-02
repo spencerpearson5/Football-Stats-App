@@ -5,8 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F7F9FC">
+    android:background="?android:attr/windowBackground">
 
+    <!-- Main scrollable container for player details and stats -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -22,14 +23,14 @@
             android:paddingEnd="24dp"
             android:paddingBottom="24dp">
 
-
+            <!-- Player Info Card: Name and Team -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="#E3F2FD"
+                app:cardBackgroundColor="?attr/colorSecondaryContainer"
                 app:cardCornerRadius="22dp"
                 app:cardElevation="4dp"
-                app:strokeColor="#D9D9D9"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -42,14 +43,14 @@
                         android:layout_width="42dp"
                         android:layout_height="5dp"
                         android:layout_marginBottom="16dp"
-                        android:background="#1E3A8A" />
+                        android:background="?attr/colorPrimary" />
 
                     <TextView
                         android:id="@+id/playerNameText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Player Name"
-                        android:textColor="@android:color/black"
+                        android:textColor="?android:attr/textColorPrimary"
                         android:textSize="30sp"
                         android:textStyle="bold" />
 
@@ -59,7 +60,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="Team"
-                        android:textColor="#666666"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="17sp" />
 
                 </LinearLayout>
@@ -72,10 +73,11 @@
                 android:layout_marginTop="28dp"
                 android:layout_marginBottom="12dp"
                 android:text="Passing Stats"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
+            <!-- Row 1: Yards and Touchdowns -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -86,10 +88,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
                     app:cardCornerRadius="18dp"
                     app:cardElevation="3dp"
-                    app:strokeColor="#D9D9D9"
+                    app:strokeColor="?attr/colorOutlineVariant"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -102,7 +104,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Yards"
-                            android:textColor="#666666"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="12sp" />
 
                         <TextView
@@ -111,7 +113,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="0"
-                            android:textColor="#1E3A8A"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="24sp"
                             android:textStyle="bold" />
 
@@ -124,10 +126,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
                     app:cardCornerRadius="18dp"
                     app:cardElevation="3dp"
-                    app:strokeColor="#D9D9D9"
+                    app:strokeColor="?attr/colorOutlineVariant"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -140,7 +142,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Touchdowns"
-                            android:textColor="#666666"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="12sp" />
 
                         <TextView
@@ -149,7 +151,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="0"
-                            android:textColor="#1E3A8A"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="24sp"
                             android:textStyle="bold" />
 
@@ -163,6 +165,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="16dp" />
 
+            <!-- Row 2: Completions and Attempts -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -173,10 +176,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
                     app:cardCornerRadius="18dp"
                     app:cardElevation="3dp"
-                    app:strokeColor="#D9D9D9"
+                    app:strokeColor="?attr/colorOutlineVariant"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -189,7 +192,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Completions"
-                            android:textColor="#666666"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="12sp" />
 
                         <TextView
@@ -198,7 +201,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="0"
-                            android:textColor="#1E3A8A"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="24sp"
                             android:textStyle="bold" />
 
@@ -211,10 +214,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
                     app:cardCornerRadius="18dp"
                     app:cardElevation="3dp"
-                    app:strokeColor="#D9D9D9"
+                    app:strokeColor="?attr/colorOutlineVariant"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -227,7 +230,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Attempts"
-                            android:textColor="#666666"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="12sp" />
 
                         <TextView
@@ -236,7 +239,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="0"
-                            android:textColor="#1E3A8A"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="24sp"
                             android:textStyle="bold" />
 
@@ -250,6 +253,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="16dp" />
 
+            <!-- Row 3: Completion % and Interceptions -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -260,10 +264,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
                     app:cardCornerRadius="18dp"
                     app:cardElevation="3dp"
-                    app:strokeColor="#D9D9D9"
+                    app:strokeColor="?attr/colorOutlineVariant"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -276,7 +280,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Comp %"
-                            android:textColor="#666666"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="12sp" />
 
                         <TextView
@@ -285,7 +289,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="0.0%"
-                            android:textColor="#1E3A8A"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="24sp"
                             android:textStyle="bold" />
 
@@ -298,10 +302,10 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="8dp"
-                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardBackgroundColor="?attr/colorSurfaceContainer"
                     app:cardCornerRadius="18dp"
                     app:cardElevation="3dp"
-                    app:strokeColor="#D9D9D9"
+                    app:strokeColor="?attr/colorOutlineVariant"
                     app:strokeWidth="1dp">
 
                     <LinearLayout
@@ -314,7 +318,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Interceptions"
-                            android:textColor="#666666"
+                            android:textColor="?android:attr/textColorSecondary"
                             android:textSize="12sp" />
 
                         <TextView
@@ -323,7 +327,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             android:text="0"
-                            android:textColor="#1E3A8A"
+                            android:textColor="?attr/colorPrimary"
                             android:textSize="24sp"
                             android:textStyle="bold" />
 
@@ -339,17 +343,18 @@
                 android:layout_marginTop="28dp"
                 android:layout_marginBottom="12dp"
                 android:text="Passing TD Graph"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
+            <!-- TD Graph Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="260dp"
-                app:cardBackgroundColor="#FFFFFF"
+                app:cardBackgroundColor="?attr/colorSurfaceContainer"
                 app:cardCornerRadius="18dp"
                 app:cardElevation="3dp"
-                app:strokeColor="#D9D9D9"
+                app:strokeColor="?attr/colorOutlineVariant"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -362,7 +367,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Touchdowns by Season"
-                        android:textColor="#666666"
+                        android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
 
                     <LinearLayout
@@ -385,7 +390,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="8dp"
                                 android:text="0"
-                                android:textColor="#1E3A8A"
+                                android:textColor="?attr/colorPrimary"
                                 android:textSize="16sp"
                                 android:textStyle="bold" />
 
@@ -393,14 +398,14 @@
                                 android:id="@+id/tdBar"
                                 android:layout_width="56dp"
                                 android:layout_height="40dp"
-                                android:background="#1E3A8A" />
+                                android:background="?attr/colorPrimary" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="8dp"
                                 android:text="2024"
-                                android:textColor="#666666"
+                                android:textColor="?android:attr/textColorSecondary"
                                 android:textSize="14sp" />
 
                         </LinearLayout>
@@ -415,11 +420,12 @@
 
     </ScrollView>
 
+    <!-- Global Bottom Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="?attr/colorSurface"
         app:itemIconTint="@color/bottom_nav_color"
         app:itemTextColor="@color/bottom_nav_color"
         app:labelVisibilityMode="labeled"

@@ -8,13 +8,11 @@ import kotlinx.coroutines.withContext
 import org.jsoup.Jsoup
 
 object PlayerRepository {
-
+    // initialize the datatbase
     private val db = FirebaseFirestore.getInstance()
     private val qbCollection = db.collection("quarterbacks")
 
-    /**
-     * Fetches QB stats from Firestore.
-     */
+    // retrieves qb stats from firestore
     suspend fun get_qbs(): List<Quarterbacks> {
         return try {
             val snapshot = qbCollection.get().await()
@@ -25,10 +23,8 @@ object PlayerRepository {
         }
     }
 
-    /**
-     * Scrapes data from the web and updates Firestore.
-     * This ensures the database is kept up to date.
-     */
+   // Scrapes the passing data from nfl.com and updates the firebase so the data is as
+   // recent as possible
     suspend fun refresh_stats_in_firestore() {
         withContext(Dispatchers.IO) {
             try {
@@ -37,6 +33,8 @@ object PlayerRepository {
                 val doc = Jsoup.connect(url).get()
                 val rows = doc.select("tbody tr")
 
+
+                // select which stats to pull
                 for (row in rows.take(15)) {
                     val qb = Quarterbacks(
                         name = row.select(".d3-o-player-fullname").text().trim(),
@@ -50,7 +48,7 @@ object PlayerRepository {
                         interceptions = row.select("td:nth-child(8)").text().trim()
                     )
                     
-                    // Use name as document ID to avoid duplicates
+                    // Use name as document ID, this way will avoid duplicates
                     if (qb.name.isNotEmpty()) {
                         qbCollection.document(qb.name).set(qb).await()
                     }

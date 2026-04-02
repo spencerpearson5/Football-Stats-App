@@ -16,8 +16,6 @@ class PlayerProfileActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
-        ThemeUtils.applyTheme(this)
-
         setContentView(R.layout.activity_player_profile)
 
         val playerNameText: TextView = findViewById(R.id.playerNameText)

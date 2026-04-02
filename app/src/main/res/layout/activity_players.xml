@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F7F9FC">
+    android:background="?android:attr/windowBackground">
 
     <TextView
         android:layout_width="match_parent"
@@ -14,7 +14,7 @@
         android:textSize="28sp"
         android:textStyle="bold"
         android:padding="24dp"
-        android:textColor="@android:color/black" />
+        android:textColor="?android:attr/textColorPrimary" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -29,7 +29,7 @@
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="?attr/colorSurface"
         app:itemIconTint="@color/bottom_nav_color"
         app:itemTextColor="@color/bottom_nav_color"
         app:menu="@menu/bottom_nav_menu" />
