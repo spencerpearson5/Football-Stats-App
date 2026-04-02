@@ -129,11 +129,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_players -> {
-                    Toast.makeText(
-                        this,
-                        "Players page coming soon",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    startActivity(Intent(this, PlayersActivity::class.java))
                     true
                 }
 

@@ -83,11 +83,9 @@ class PlayerProfileActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_players -> {
-                    Toast.makeText(
-                        this,
-                        "Players page coming soon",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    val intent = Intent(this, PlayersActivity::class.java)
+                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    startActivity(intent)
                     true
                 }
 
