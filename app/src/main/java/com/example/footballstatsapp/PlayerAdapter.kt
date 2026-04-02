@@ -8,7 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.footballstatsapp.datamodel.Quarterbacks
 
-class PlayerAdapter(private var players: List<Quarterbacks>) :
+class PlayerAdapter(private var players: List<Quarterbacks>,
+                    private val onClick: (Quarterbacks) -> Unit) :
     RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
     class PlayerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val name_text: TextView = view.findViewById(android.R.id.text1)
@@ -26,6 +27,9 @@ class PlayerAdapter(private var players: List<Quarterbacks>) :
         holder.name_text.text = player.name
         holder.stats_text.text =
             "${player.team} | Passing Yards: ${player.passing_yards}"
+        holder.itemView.setOnClickListener {
+            onClick(players[position])
+        }
     }
 
     override fun getItemCount() = players.size
