@@ -78,7 +78,8 @@ class PlayersActivity : AppCompatActivity() {
                 }
                 R.id.nav_players -> true
                 R.id.nav_leaderboards -> {
-                    Toast.makeText(this, "Leaderboards coming soon", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, LeaderboardActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.nav_compare -> {

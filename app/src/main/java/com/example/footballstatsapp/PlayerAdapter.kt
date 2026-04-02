@@ -12,6 +12,8 @@ class PlayerAdapter(
     private val onClick: (Quarterbacks) -> Unit
 ) : RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
 
+    private var currentDisplayStat: String = "Yards"
+
     class PlayerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val playerNameText: TextView = view.findViewById(R.id.playerNameText)
         val playerTeamText: TextView = view.findViewById(R.id.playerTeamText)
@@ -29,7 +31,15 @@ class PlayerAdapter(
 
         holder.playerNameText.text = player.name
         holder.playerTeamText.text = player.team
-        holder.playerStatText.text = player.passing_yards
+        holder.playerStatText.text = when(currentDisplayStat) {
+            "Yards"       -> "${player.passing_yards} Yds"
+            "TDs"         -> "${player.passing_touchdowns} TDs"
+            "Completions" -> "${player.completions} Comp"
+            "Attempts"    -> "${player.attempts} Att"
+            "Percentage"  -> player.completion_percentage // Already has %
+            "Ints"        -> "${player.interceptions} Ints"
+            else          -> player.passing_yards
+        }
 
         holder.itemView.setOnClickListener {
             onClick(player)
@@ -38,8 +48,9 @@ class PlayerAdapter(
 
     override fun getItemCount(): Int = players.size
 
-    fun update_data(new_players: List<Quarterbacks>) {
-        players = new_players
+    fun update_data(new_players: List<Quarterbacks>, statType: String = "Yards") {
+        this.players = new_players
+        this.currentDisplayStat = statType
         notifyDataSetChanged()
     }
 }

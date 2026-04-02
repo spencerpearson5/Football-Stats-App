@@ -130,7 +130,8 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_home -> true
                 R.id.nav_leaderboards -> {
-                    Toast.makeText(this, "Leaderboards page coming soon", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, LeaderboardActivity::class.java)
+                    startActivity(intent)
                     true
                 }
                 R.id.nav_players -> {

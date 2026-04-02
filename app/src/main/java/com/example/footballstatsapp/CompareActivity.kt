@@ -155,6 +155,10 @@ class CompareActivity : AppCompatActivity() {
                     finish()
                     true
                 }
+                R.id.nav_leaderboards -> {
+                    startActivity(Intent(this, LeaderboardActivity::class.java))
+                    true
+                }
                 R.id.nav_compare -> true
                 R.id.nav_settings -> {
                     startActivity(Intent(this, SettingsActivity::class.java))

@@ -86,11 +86,7 @@ class PlayerProfileActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_leaderboards -> {
-                    Toast.makeText(
-                        this,
-                        "Leaderboards coming soon",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    startActivity(Intent(this, LeaderboardActivity::class.java))
                     true
                 }
 
