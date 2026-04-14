@@ -15,7 +15,7 @@ class PlayerProfileActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         setContentView(R.layout.activity_player_profile)
 
         val playerNameText: TextView = findViewById(R.id.playerNameText)
@@ -31,6 +31,15 @@ class PlayerProfileActivity : AppCompatActivity() {
 
         val playerName = intent.getStringExtra("player_name") ?: "Unknown Player"
         val team = intent.getStringExtra("team") ?: "Unknown Team"
+
+        val playerCard = findViewById<com.google.android.material.card.MaterialCardView>(R.id.playerCard)
+
+        val cleanTeam = team.split(" ").first().trim()
+        val teamColor = getTeamColor(cleanTeam)
+
+        playerCard.strokeColor = teamColor
+        tdBar.setBackgroundColor(teamColor)
+
         val passingYards = intent.getStringExtra("passing_yards") ?: "N/A"
         val passingTouchdowns = intent.getStringExtra("passing_touchdowns") ?: "N/A"
         val completions = intent.getStringExtra("completions") ?: "N/A"
@@ -44,13 +53,13 @@ class PlayerProfileActivity : AppCompatActivity() {
         passingTDText.text = passingTouchdowns
         completionsText.text = completions
         attemptsText.text = attempts
-        compPercentageText.text = if (compPercentage.contains("%")) compPercentage else "$compPercentage%"
+        compPercentageText.text =
+            if (compPercentage.contains("%")) compPercentage else "$compPercentage%"
         interceptionsText.text = interceptions
         tdValueLabel.text = passingTouchdowns
 
         val tdNumber = passingTouchdowns.toIntOrNull() ?: 0
 
-        // scale one bar based on a max of 60 TDs
         val maxTouchdowns = 60
         val minBarHeightDp = 40
         val maxBarHeightDp = 140
@@ -108,6 +117,61 @@ class PlayerProfileActivity : AppCompatActivity() {
 
                 else -> false
             }
+        }
+    }
+
+    private fun getTeamColor(team: String): Int {
+        return when (team) {
+
+            // NFC North
+            "MIN" -> android.graphics.Color.parseColor("#4F2683") // Vikings
+            "GB" -> android.graphics.Color.parseColor("#203731")  // Packers
+            "CHI" -> android.graphics.Color.parseColor("#0B162A") // Bears
+            "DET" -> android.graphics.Color.parseColor("#0076B6") // Lions
+
+            // NFC East
+            "DAL" -> android.graphics.Color.parseColor("#003594") // Cowboys
+            "PHI" -> android.graphics.Color.parseColor("#004C54") // Eagles
+            "NYG" -> android.graphics.Color.parseColor("#0B2265") // Giants
+            "WAS" -> android.graphics.Color.parseColor("#5A1414") // Commanders
+
+            // NFC West
+            "SF" -> android.graphics.Color.parseColor("#AA0000")  // 49ers
+            "SEA" -> android.graphics.Color.parseColor("#002244") // Seahawks
+            "LAR" -> android.graphics.Color.parseColor("#003594") // Rams
+            "ARI" -> android.graphics.Color.parseColor("#97233F") // Cardinals
+
+            // NFC South
+            "NO" -> android.graphics.Color.parseColor("#D3BC8D")  // Saints
+            "TB" -> android.graphics.Color.parseColor("#D50A0A")  // Buccaneers
+            "ATL" -> android.graphics.Color.parseColor("#A71930") // Falcons
+            "CAR" -> android.graphics.Color.parseColor("#0085CA") // Panthers
+
+            // AFC North
+            "BAL" -> android.graphics.Color.parseColor("#241773") // Ravens
+            "CIN" -> android.graphics.Color.parseColor("#FB4F14") // Bengals
+            "CLE" -> android.graphics.Color.parseColor("#311D00") // Browns
+            "PIT" -> android.graphics.Color.parseColor("#FFB612") // Steelers
+
+            // AFC East
+            "BUF" -> android.graphics.Color.parseColor("#00338D") // Bills
+            "MIA" -> android.graphics.Color.parseColor("#008E97") // Dolphins
+            "NE" -> android.graphics.Color.parseColor("#002244")  // Patriots
+            "NYJ" -> android.graphics.Color.parseColor("#125740") // Jets
+
+            // AFC West
+            "KC" -> android.graphics.Color.parseColor("#E31837")  // Chiefs
+            "LV" -> android.graphics.Color.parseColor("#000000")  // Raiders
+            "LAC" -> android.graphics.Color.parseColor("#0080C6") // Chargers
+            "DEN" -> android.graphics.Color.parseColor("#FB4F14") // Broncos
+
+            // AFC South
+            "HOU" -> android.graphics.Color.parseColor("#03202F") // Texans
+            "IND" -> android.graphics.Color.parseColor("#002C5F") // Colts
+            "JAX" -> android.graphics.Color.parseColor("#006778") // Jaguars
+            "TEN" -> android.graphics.Color.parseColor("#4B92DB") // Titans
+
+            else -> android.graphics.Color.GRAY
         }
     }
 }
