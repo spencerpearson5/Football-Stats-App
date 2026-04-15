@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "449485230379",
+    "project_id": "nfl-stats-app-ef3d5",
+    "storage_bucket": "nfl-stats-app-ef3d5.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:449485230379:android:bde76af9a08666430af56e",
+        "android_client_info": {
+          "package_name": "com.example.footballstatsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2d-vN0_jydUuaFx7YRK2q_vwyN23Zwaw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

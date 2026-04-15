@@ -3,8 +3,13 @@ import org.gradle.kotlin.dsl.support.kotlinCompilerOptions
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+<<<<<<< Updated upstream
 
     id("org.jetbrains.kotlin.plugin.compose")
+=======
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.google.services)
+>>>>>>> Stashed changes
 }
 
 android {
@@ -52,20 +57,49 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.firebase.database.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("org.jsoup:jsoup:1.17.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+<<<<<<< Updated upstream
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
     debugImplementation("androidx.compose.ui:ui-tooling")
+=======
+    implementation("org.jetbrains.exposed:exposed-core:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
+    implementation("org.xerial:sqlite-jdbc:3.42.0.0")
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.analytics.ktx)
+
+    implementation("org.jsoup:jsoup:1.18.1")
+    
+    // Compose BoM
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+
+>>>>>>> Stashed changes
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
 
+<<<<<<< Updated upstream
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
     implementation(composeBom)
     androidTestImplementation(composeBom)
+=======
+    // Import the Firebase BoM
+    //implementation(platform(libs.firebase.bom))
+
+    // When using the BoM, don't specify versions in Firebase dependencies
+    //implementation("com.google.firebase:firebase-analytics")
+    //implementation(libs.firebase.firestore)
+>>>>>>> Stashed changes
 }
