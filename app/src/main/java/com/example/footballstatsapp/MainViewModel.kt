@@ -26,12 +26,6 @@ class MainViewModel : ViewModel() {
 
     fun loadStats() {
         viewModelScope.launch {
-<<<<<<< Updated upstream
-            _players.value = PlayerRepository.get_qbs()
-        }
-    }
-
-=======
             PlayerRepository.get_qbs().collect { dataList ->
                 if (dataList.isEmpty()) {
                     println("Debug: Flow received, but list is empty")
@@ -42,5 +36,4 @@ class MainViewModel : ViewModel() {
             }
         }
     }
->>>>>>> Stashed changes
 }

@@ -2,12 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
 
-
-
     <application
+        android:name=".FootballStatsApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,6 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FootballStatsApp">
+        <activity android:name=".LeaderboardActivity" />
+        <activity android:name=".CompareActivity" />
+        <activity android:name=".SettingsActivity" />
+        <activity android:name=".PlayersActivity" />
+        <activity android:name=".PlayerProfileActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
