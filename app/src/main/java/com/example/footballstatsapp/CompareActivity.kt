@@ -10,7 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.footballstatsapp.datamodel.Quarterbacks
+import com.example.footballstatsapp.datamodel.Player
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
@@ -29,9 +29,9 @@ class CompareActivity : AppCompatActivity() {
     private lateinit var bottomNavigation: BottomNavigationView
 
     // store current player selections.
-    private var allPlayers: List<Quarterbacks> = emptyList()
-    private var selectedPlayer1: Quarterbacks? = null
-    private var selectedPlayer2: Quarterbacks? = null
+    private var allPlayers: List<Player> = emptyList()
+    private var selectedPlayer1: Player? = null
+    private var selectedPlayer2: Player? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +67,7 @@ class CompareActivity : AppCompatActivity() {
     }
 
    // Configure the autocomplete of the search function
-    private fun setupAutocomplete(players: List<Quarterbacks>) {
+    private fun setupAutocomplete(players: List<Player>) {
         // retrieve distinct, sorted player names.
         val playerNames = players.map { it.name }.distinct().sorted()
 
@@ -112,28 +112,28 @@ class CompareActivity : AppCompatActivity() {
             player2Name.text = p2.name
 
             // Update Passing Yards
-            findViewById<TextView>(R.id.p1Yards).text = p1.passing_yards
-            findViewById<TextView>(R.id.p2Yards).text = p2.passing_yards
+            findViewById<TextView>(R.id.p1Yards).text = p1.passingYards.toInt().toString()
+            findViewById<TextView>(R.id.p2Yards).text = p2.passingYards.toInt().toString()
 
             // Update Passing TDs
-            findViewById<TextView>(R.id.p1TDs).text = p1.passing_touchdowns
-            findViewById<TextView>(R.id.p2TDs).text = p2.passing_touchdowns
+            findViewById<TextView>(R.id.p1TDs).text = p1.passingTouchdowns.toInt().toString()
+            findViewById<TextView>(R.id.p2TDs).text = p2.passingTouchdowns.toInt().toString()
 
             // Update Completions
-            findViewById<TextView>(R.id.p1Completions).text = p1.completions
-            findViewById<TextView>(R.id.p2Completions).text = p2.completions
+            findViewById<TextView>(R.id.p1Completions).text = p1.passingCompletions.toInt().toString()
+            findViewById<TextView>(R.id.p2Completions).text = p2.passingCompletions.toInt().toString()
 
             // Update Attempts
-            findViewById<TextView>(R.id.p1Attempts).text = p1.attempts
-            findViewById<TextView>(R.id.p2Attempts).text = p2.attempts
+            findViewById<TextView>(R.id.p1Attempts).text = p1.passingAttempts.toInt().toString()
+            findViewById<TextView>(R.id.p2Attempts).text = p2.passingAttempts.toInt().toString()
 
             // Update Completion Percentage
-            findViewById<TextView>(R.id.p1Percentage).text = p1.completion_percentage
-            findViewById<TextView>(R.id.p2Percentage).text = p2.completion_percentage
+            findViewById<TextView>(R.id.p1Percentage).text = String.format("%.1f%%", p1.completionPercentage)
+            findViewById<TextView>(R.id.p2Percentage).text = String.format("%.1f%%", p2.completionPercentage)
 
             // Update Interceptions
-            findViewById<TextView>(R.id.p1Interceptions).text = p1.interceptions
-            findViewById<TextView>(R.id.p2Interceptions).text = p2.interceptions
+            findViewById<TextView>(R.id.p1Interceptions).text = p1.passingInterceptions.toInt().toString()
+            findViewById<TextView>(R.id.p2Interceptions).text = p2.passingInterceptions.toInt().toString()
         } else {
             // Keep comparison hidden if either player is not yet selected.
             comparisonLayout.visibility = View.GONE

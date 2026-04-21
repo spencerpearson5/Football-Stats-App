@@ -1,61 +1,62 @@
 package com.example.footballstatsapp.data
 
-import com.example.footballstatsapp.datamodel.Quarterbacks
-import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.Dispatchers
+import com.example.footballstatsapp.datamodel.Player
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
-import org.jsoup.Jsoup
 
 object PlayerRepository {
-    // initialize the datatbase
-    private val db = FirebaseFirestore.getInstance()
-    private val qbCollection = db.collection("quarterbacks")
 
-    // retrieves qb stats from firestore
-    suspend fun get_qbs(): List<Quarterbacks> {
+    private val database = FirebaseDatabase.getInstance().getReference("seasons")
+
+
+    //upload list of players in a season to firebase
+    fun uploadSeason(year: Int, players: List<Player>) {
+        database.child(year.toString()).setValue(players)
+            .addOnSuccessListener {
+                println("Scraper: Successfully uploaded $year to Firebase")
+            }
+            .addOnFailureListener {
+                println("Scraper: Failed to upload $year: ${it.message}")
+            }
+    }
+
+    //check for season before scraping (optimizes scraping speed)
+    suspend fun isSeasonMissing(year: Int): Boolean {
         return try {
-            val snapshot = qbCollection.get().await()
-            snapshot.toObjects(Quarterbacks::class.java)
+            val snapshot = database.child(year.toString()).get().await()
+            !snapshot.exists() || snapshot.childrenCount == 0L
         } catch (e: Exception) {
-            e.printStackTrace()
-            emptyList()
+            true
         }
     }
 
-   // Scrapes the passing data from nfl.com and updates the firebase so the data is as
-   // recent as possible
-    suspend fun refresh_stats_in_firestore() {
-        withContext(Dispatchers.IO) {
-            try {
-                // Scraping logic (NFL.com passing stats)
-                val url = "https://www.nfl.com/stats/player-stats/category/passing/2025/reg/all/passingyards/desc"
-                val doc = Jsoup.connect(url).get()
-                val rows = doc.select("tbody tr")
 
+    fun get_qbs(): Flow<List<Player>> = callbackFlow {
+        val listener = database.addValueEventListener(object : com.google.firebase.database.ValueEventListener {
+            override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
+                val allPlayers = mutableListOf<Player>()
 
-                // select which stats to pull
-                for (row in rows.take(15)) {
-                    val qb = Quarterbacks(
-                        name = row.select(".d3-o-player-fullname").text().trim(),
-                        team = row.select(".d3-o-player-team").text().trim(),
-                        // Column 2: Yards, Column 4: Completions, Column 5: Attempts, Column 6: Pct, Column 7: TD, Column 8: INT
-                        passing_yards = row.select("td:nth-child(2)").text().trim(),
-                        completions = row.select("td:nth-child(4)").text().trim(),
-                        attempts = row.select("td:nth-child(5)").text().trim(),
-                        completion_percentage = row.select("td:nth-child(6)").text().trim(),
-                        passing_touchdowns = row.select("td:nth-child(7)").text().trim(),
-                        interceptions = row.select("td:nth-child(8)").text().trim()
-                    )
-                    
-                    // Use name as document ID, this way will avoid duplicates
-                    if (qb.name.isNotEmpty()) {
-                        qbCollection.document(qb.name).set(qb).await()
+                //iterate through desired years
+                for (yearSnapshot in snapshot.children) {
+                    //loop for all players in that season
+                    for (playerSnapshot in yearSnapshot.children) {
+                        val player = playerSnapshot.getValue(Player::class.java)
+                        if (player != null) {
+                            allPlayers.add(player)
+                        }
                     }
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
+                trySend(allPlayers)
             }
-        }
+
+            override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
+                close(error.toException())
+            }
+        })
+
+        awaitClose { database.removeEventListener(listener) }
     }
 }

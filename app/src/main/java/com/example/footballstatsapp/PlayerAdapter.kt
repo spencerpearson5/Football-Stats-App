@@ -5,14 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.footballstatsapp.datamodel.Quarterbacks
+import com.example.footballstatsapp.datamodel.Player
 
 class PlayerAdapter(
-    private var players: List<Quarterbacks>,
-    private val onClick: (Quarterbacks) -> Unit
+    private var players: List<Player>,
+    private var currentCategory: String = "Yards",
+    private val onPlayerClick: (Player) -> Unit
 ) : RecyclerView.Adapter<PlayerAdapter.PlayerViewHolder>() {
 
-    private var currentDisplayStat: String = "Yards"
+    //track stat label to include on card
+    private var currentDisplayStat: String = currentCategory
 
     class PlayerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val playerNameText: TextView = view.findViewById(R.id.playerNameText)
@@ -20,10 +22,7 @@ class PlayerAdapter(
         val playerStatText: TextView = view.findViewById(R.id.playerStatText)
     }
 
-    override fun onCreateViewHolder(
-        parent: ViewGroup,
-        viewType: Int
-    ): PlayerViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_player, parent, false)
         return PlayerViewHolder(view)
@@ -34,29 +33,28 @@ class PlayerAdapter(
 
         holder.playerNameText.text = player.name
         holder.playerTeamText.text = player.team
-        holder.playerStatText.text = when (currentDisplayStat) {
-            "Yards" -> "${player.passing_yards} Yds"
-            "TDs" -> "${player.passing_touchdowns} TDs"
-            "Completions" -> "${player.completions} Comp"
-            "Attempts" -> "${player.attempts} Att"
-            "Percentage" -> player.completion_percentage
-            "Ints" -> "${player.interceptions} Ints"
-            else -> player.passing_yards
+
+        holder.playerStatText.text = when(currentDisplayStat) {
+            "Yards"       -> "${player.passingYards.toInt()} Yds"
+            "TDs"         -> "${player.passingTouchdowns.toInt()} TDs"
+            "Completions" -> "${player.passingCompletions.toInt()} Cmp"
+            "Attempts"    -> "${player.passingAttempts.toInt()} Att"
+            "Percentage"  -> "${player.completionPercentage}%"
+            "Ints"        -> "${player.passingInterceptions.toInt()} Ints"
+            "Season"      -> "Year: ${player.season}"
+            else          -> "${player.passingYards.toInt()} Yds"
         }
 
         holder.itemView.setOnClickListener {
-            onClick(player)
+            onPlayerClick(player)
         }
     }
 
     override fun getItemCount(): Int = players.size
 
-    fun update_data(
-        newPlayers: List<Quarterbacks>,
-        statType: String = "Yards"
-    ) {
-        players = newPlayers
-        currentDisplayStat = statType
+    fun update_data(new_players: List<Player>, statType: String = "Yards") {
+        this.players = new_players
+        this.currentDisplayStat = statType
         notifyDataSetChanged()
     }
 }

@@ -18,6 +18,7 @@ class PlayerProfileActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_player_profile)
 
+        // mapping
         val playerNameText: TextView = findViewById(R.id.playerNameText)
         val teamText: TextView = findViewById(R.id.teamText)
         val passingYardsText: TextView = findViewById(R.id.passingYardsText)
@@ -37,29 +38,28 @@ class PlayerProfileActivity : AppCompatActivity() {
         val cleanTeam = team.split(" ").first().trim()
         val teamColor = getTeamColor(cleanTeam)
 
-        playerCard.strokeColor = teamColor
-        tdBar.setBackgroundColor(teamColor)
+        val passingYards = intent.getDoubleExtra("passing_yards", 0.0)
+        val passingTouchdowns = intent.getDoubleExtra("passing_touchdowns", 0.0)
+        val completions = intent.getDoubleExtra("completions", 0.0)
+        val attempts = intent.getDoubleExtra("attempts", 0.0)
+        val compPercentage = intent.getDoubleExtra("completion_percentage", 0.0)
+        val interceptions = intent.getDoubleExtra("interceptions", 0.0)
 
-        val passingYards = intent.getStringExtra("passing_yards") ?: "N/A"
-        val passingTouchdowns = intent.getStringExtra("passing_touchdowns") ?: "N/A"
-        val completions = intent.getStringExtra("completions") ?: "N/A"
-        val attempts = intent.getStringExtra("attempts") ?: "N/A"
-        val compPercentage = intent.getStringExtra("completion_percentage") ?: "N/A"
-        val interceptions = intent.getStringExtra("interceptions") ?: "N/A"
-
+        // convert doubles to ints
         playerNameText.text = playerName
         teamText.text = team
-        passingYardsText.text = passingYards
-        passingTDText.text = passingTouchdowns
-        completionsText.text = completions
-        attemptsText.text = attempts
-        compPercentageText.text =
-            if (compPercentage.contains("%")) compPercentage else "$compPercentage%"
-        interceptionsText.text = interceptions
-        tdValueLabel.text = passingTouchdowns
+        passingYardsText.text = passingYards.toInt().toString()
+        passingTDText.text = passingTouchdowns.toInt().toString()
+        completionsText.text = completions.toInt().toString()
+        attemptsText.text = attempts.toInt().toString()
 
-        val tdNumber = passingTouchdowns.toIntOrNull() ?: 0
+        // Format percentage to look cleaner
+        compPercentageText.text = String.format("%.1f%%", compPercentage)
 
+        interceptionsText.text = interceptions.toInt().toString()
+        tdValueLabel.text = passingTouchdowns.toInt().toString()
+
+        val tdNumber = passingTouchdowns.toInt()
         val maxTouchdowns = 60
         val minBarHeightDp = 40
         val maxBarHeightDp = 140
@@ -67,8 +67,8 @@ class PlayerProfileActivity : AppCompatActivity() {
         val scaledHeightDp = if (tdNumber <= 0) {
             minBarHeightDp
         } else {
-            minBarHeightDp + ((tdNumber.toFloat() / maxTouchdowns) *
-                    (maxBarHeightDp - minBarHeightDp)).toInt()
+            val progress = (tdNumber.toFloat() / maxTouchdowns).coerceAtMost(1.0f)
+            minBarHeightDp + (progress * (maxBarHeightDp - minBarHeightDp)).toInt()
         }
 
         val scaledHeightPx = TypedValue.applyDimension(
@@ -81,16 +81,19 @@ class PlayerProfileActivity : AppCompatActivity() {
         layoutParams.height = scaledHeightPx
         tdBar.layoutParams = layoutParams
 
-        bottomNavigation = findViewById(R.id.bottomNavigation)
+        setupNavigation()
+    }
 
-        bottomNavigation.selectedItemId = R.id.nav_home
+    private fun setupNavigation() {
+        bottomNavigation = findViewById(R.id.bottomNavigation)
+        bottomNavigation.selectedItemId = R.id.nav_players
 
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    val intent = Intent(this, MainActivity::class.java)
-                    intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    startActivity(intent)
+                    startActivity(Intent(this, MainActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    })
                     true
                 }
 
@@ -100,6 +103,9 @@ class PlayerProfileActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_players -> {
+                    startActivity(Intent(this, PlayersActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    })
                     val intent = Intent(this, PlayersActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                     startActivity(intent)
@@ -107,11 +113,7 @@ class PlayerProfileActivity : AppCompatActivity() {
                 }
 
                 R.id.nav_compare -> {
-                    Toast.makeText(
-                        this,
-                        "Compare page coming soon",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    startActivity(Intent(this, CompareActivity::class.java))
                     true
                 }
 

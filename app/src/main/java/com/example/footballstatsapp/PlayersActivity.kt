@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.footballstatsapp.datamodel.Quarterbacks
+import com.example.footballstatsapp.datamodel.Player
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
@@ -22,7 +22,7 @@ class PlayersActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var alphabetBar: LinearLayout
 
-    private var sortedPlayers: List<Quarterbacks> = emptyList()
+    private var sortedPlayers: List<Player> = emptyList()
     private val letterViews = mutableMapOf<Char, TextView>()
     private var selectedLetter: Char? = null
 
@@ -40,15 +40,12 @@ class PlayersActivity : AppCompatActivity() {
             val intent = Intent(this, PlayerProfileActivity::class.java)
             intent.putExtra("player_name", player.name)
             intent.putExtra("team", player.team)
-            intent.putExtra("passing_yards", player.passing_yards)
-            intent.putExtra("passing_touchdowns", player.passing_touchdowns)
-            intent.putExtra("completions", player.completions)
-            intent.putExtra("attempts", player.attempts)
-            intent.putExtra(
-                "completion_percentage",
-                player.completion_percentage
-            )
-            intent.putExtra("interceptions", player.interceptions)
+            intent.putExtra("passing_yards", player.passingYards.toInt().toString())
+            intent.putExtra("passing_touchdowns", player.passingTouchdowns.toInt().toString())
+            intent.putExtra("completions", player.passingCompletions.toInt().toString())
+            intent.putExtra("attempts", player.passingAttempts.toInt().toString())
+            intent.putExtra("completion_percentage", player.completionPercentage.toString())
+            intent.putExtra("interceptions", player.passingInterceptions.toInt().toString())
             startActivity(intent)
         }
 

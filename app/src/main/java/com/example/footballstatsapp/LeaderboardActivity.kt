@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.footballstatsapp.datamodel.Quarterbacks
+import com.example.footballstatsapp.datamodel.Player
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
@@ -21,7 +21,11 @@ class LeaderboardActivity : AppCompatActivity() {
     private lateinit var playerAdapter: PlayerAdapter
     private lateinit var chartAdapter: LeaderboardChartAdapter
     private lateinit var bottomNavigation: BottomNavigationView
+
     private val statCategories = listOf("Yards", "TDs", "Completions", "Attempts", "Percentage", "Ints")
+
+    // set years
+    private val years = (2024 downTo 2005).map { it.toString() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +33,7 @@ class LeaderboardActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
+        // chart setup
         val chartRecyclerView: RecyclerView = findViewById(R.id.chartRecyclerView)
         chartAdapter = LeaderboardChartAdapter(emptyList(), "Yards")
         chartRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
@@ -40,13 +45,12 @@ class LeaderboardActivity : AppCompatActivity() {
         recyclerView.adapter = playerAdapter
 
         setupRecyclerView()
-        setupSpinner()
+        setupSpinners()
         setupBottomNavigation()
 
         lifecycleScope.launch {
             viewModel.players.collect {
-                val currentStat = findViewById<Spinner>(R.id.statSpinner).selectedItem.toString()
-                updateLeaderboard(currentStat)
+                refreshData()
             }
         }
     }
@@ -59,47 +63,71 @@ class LeaderboardActivity : AppCompatActivity() {
             val intent = Intent(this, PlayerProfileActivity::class.java).apply {
                 putExtra("player_name", player.name)
                 putExtra("team", player.team)
-                putExtra("passing_yards", player.passing_yards)
-                putExtra("passing_touchdowns", player.passing_touchdowns)
-                putExtra("completions", player.completions)
-                putExtra("attempts", player.attempts)
-                putExtra("completion_percentage", player.completion_percentage)
-                putExtra("interceptions", player.interceptions)
+                putExtra("passing_yards", player.passingYards.toInt().toString())
+                putExtra("passing_touchdowns", player.passingTouchdowns.toInt().toString())
+                putExtra("completions", player.passingCompletions.toInt().toString())
+                putExtra("attempts", player.passingAttempts.toInt().toString())
+                putExtra("completion_percentage", player.completionPercentage.toString())
+                putExtra("interceptions", player.passingInterceptions.toInt().toString())
             }
             startActivity(intent)
         }
         recyclerView.adapter = playerAdapter
     }
 
-    private fun setupSpinner() {
-        val spinner: Spinner = findViewById(R.id.statSpinner)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, statCategories)
-        spinner.adapter = adapter
+    private fun setupSpinners() {
+        val statSpinner: Spinner = findViewById(R.id.statSpinner)
+        val yearSpinner: Spinner = findViewById(R.id.yearSpinner)
 
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        // for stat
+        statSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, statCategories)
+
+        // for year
+        yearSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, years)
+
+        val itemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                updateLeaderboard(statCategories[position])
+                refreshData()
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+
+        statSpinner.onItemSelectedListener = itemSelectedListener
+        yearSpinner.onItemSelectedListener = itemSelectedListener
     }
 
-    private fun updateLeaderboard(category: String) {
+    //get current filter and sorting selections
+    private fun refreshData() {
+        val statSpinner: Spinner = findViewById(R.id.statSpinner)
+        val yearSpinner: Spinner = findViewById(R.id.yearSpinner)
+        
+        val selectedStat = statSpinner.selectedItem?.toString() ?: "Yards"
+        val selectedYear = yearSpinner.selectedItem?.toString()?.toIntOrNull() ?: 2024
+
+        updateLeaderboard(selectedStat, selectedYear)
+    }
+
+    private fun updateLeaderboard(category: String, year: Int) {
         val allPlayers = viewModel.players.value
 
-        val sortedList = when (category) {
-            "Yards" -> allPlayers.sortedByDescending { it.yardsInt }
-            "TDs" -> allPlayers.sortedByDescending { it.tdInt }
-            "Percentage" -> allPlayers.sortedByDescending { it.percentageFloat }
-            "Ints" -> allPlayers.sortedByDescending { it.intInt }
-            "Completions" -> allPlayers.sortedByDescending { it.completionsInt }
-            "Attempts" -> allPlayers.sortedByDescending { it.attemptsInt }
-            else -> allPlayers
-        }
+        // filter by the selected year
+        // sort by the selected stat category
+        val filteredAndSortedList = allPlayers
+            .filter { it.season == year }
+            .let { list ->
+                when (category) {
+                    "Yards" -> list.sortedByDescending { it.passingYards }
+                    "TDs" -> list.sortedByDescending { it.passingTouchdowns }
+                    "Percentage" -> list.sortedByDescending { it.completionPercentage }
+                    "Ints" -> list.sortedByDescending { it.passingInterceptions }
+                    "Completions" -> list.sortedByDescending { it.passingCompletions }
+                    "Attempts" -> list.sortedByDescending { it.passingAttempts }
+                    else -> list
+                }
+            }
 
-        playerAdapter.update_data(sortedList, category)
-
-        chartAdapter.updateData(sortedList.take(15), category)
+        playerAdapter.update_data(filteredAndSortedList, category)
+        chartAdapter.updateData(filteredAndSortedList.take(10), category)
     }
 
     private fun setupBottomNavigation() {

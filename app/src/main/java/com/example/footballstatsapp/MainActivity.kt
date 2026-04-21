@@ -11,7 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.footballstatsapp.datamodel.Quarterbacks
+import com.example.footballstatsapp.datamodel.Player
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
@@ -24,36 +24,32 @@ class MainActivity : AppCompatActivity() {
     private lateinit var searchEditText: AutoCompleteTextView
     private lateinit var searchButton: Button
     private lateinit var bottomNavigation: BottomNavigationView
-
     private lateinit var viewModel: MainViewModel
     private lateinit var featuredPlayerAdapter: FeaturedPlayerAdapter
-
-    // Local list to store all player data for search and display.
-    private var allPlayers: List<Quarterbacks> = emptyList()
+    private var allPlayers: List<Player> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
-
-        // Initialize ViewModel to access and observe player stats.
-        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
-
-        // Configure the horizontal RecyclerView for featured players.
-        val featuredRecyclerView: RecyclerView = findViewById(R.id.featuredRecyclerView)
-        featuredPlayerAdapter = FeaturedPlayerAdapter(emptyList()) { player ->
-            openPlayerProfile(player)
-        }
-        featuredRecyclerView.adapter = featuredPlayerAdapter
-        featuredRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
 
         // Map UI views.
         searchEditText = findViewById(R.id.searchEditText)
         searchButton = findViewById(R.id.searchButton)
         bottomNavigation = findViewById(R.id.bottomNavigation)
-
+        
         // Ensure dropdown width matches the search bar.
         searchEditText.post { searchEditText.dropDownWidth = searchEditText.width }
+
+        // Initialize ViewModel.
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
+
+        // Configure the horizontal RecyclerView for featured players.
+        val featuredRecyclerView: RecyclerView = findViewById(R.id.featuredRecyclerView)
+        featuredPlayerAdapter = FeaturedPlayerAdapter(emptyList()) { player ->
+            navigateToProfile(player)
+        }
+        featuredRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        featuredRecyclerView.adapter = featuredPlayerAdapter
 
         // Observe player data from the ViewModel.
         lifecycleScope.launch {
@@ -61,8 +57,10 @@ class MainActivity : AppCompatActivity() {
                 allPlayers = playerList
 
                 // Select two random players to feature on the home screen.
-                val featuredPlayers = allPlayers.shuffled().take(2)
-                featuredPlayerAdapter.updateData(featuredPlayers)
+                if (allPlayers.isNotEmpty()) {
+                    val featuredPlayers = allPlayers.shuffled().take(2)
+                    featuredPlayerAdapter.updateData(featuredPlayers)
+                }
 
                 // Populate the autocomplete suggestions for the search bar.
                 setupAutocomplete(allPlayers)
@@ -73,7 +71,7 @@ class MainActivity : AppCompatActivity() {
         searchEditText.setOnItemClickListener { parent, _, position, _ ->
             val selectedName = parent.getItemAtPosition(position).toString()
             val selectedPlayer = allPlayers.find { it.name.equals(selectedName, ignoreCase = true) }
-            if (selectedPlayer != null) openPlayerProfile(selectedPlayer)
+            if (selectedPlayer != null) navigateToProfile(selectedPlayer)
         }
 
         // Handle the search button click.
@@ -85,7 +83,7 @@ class MainActivity : AppCompatActivity() {
             }
             val selectedPlayer = allPlayers.find { it.name.equals(playerName, ignoreCase = true) }
             if (selectedPlayer != null) {
-                openPlayerProfile(selectedPlayer)
+                navigateToProfile(selectedPlayer)
             } else {
                 Toast.makeText(this, "Player not found", Toast.LENGTH_SHORT).show()
             }
@@ -98,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Initializes the autocomplete dropdown with distinct player names.
      */
-    private fun setupAutocomplete(players: List<Quarterbacks>) {
+    private fun setupAutocomplete(players: List<Player>) {
         val playerNames = players.map { it.name }.distinct().sorted()
         val adapter = ArrayAdapter(this, R.layout.dropdown_player_item, R.id.dropdownText, playerNames)
         searchEditText.setAdapter(adapter)
@@ -108,16 +106,17 @@ class MainActivity : AppCompatActivity() {
     /**
      * Navigates to the PlayerProfileActivity with the selected player's full statistics.
      */
-    private fun openPlayerProfile(player: Quarterbacks) {
-        val intent = Intent(this, PlayerProfileActivity::class.java)
-        intent.putExtra("player_name", player.name)
-        intent.putExtra("team", player.team)
-        intent.putExtra("passing_yards", player.passing_yards)
-        intent.putExtra("passing_touchdowns", player.passing_touchdowns)
-        intent.putExtra("completions", player.completions)
-        intent.putExtra("attempts", player.attempts)
-        intent.putExtra("completion_percentage", player.completion_percentage)
-        intent.putExtra("interceptions", player.interceptions)
+    private fun navigateToProfile(player: Player) {
+        val intent = Intent(this, PlayerProfileActivity::class.java).apply {
+            putExtra("player_name", player.name)
+            putExtra("team", player.team)
+            putExtra("passing_yards", player.passingYards.toInt().toString())
+            putExtra("passing_touchdowns", player.passingTouchdowns.toInt().toString())
+            putExtra("completions", player.passingCompletions.toInt().toString())
+            putExtra("attempts", player.passingAttempts.toInt().toString())
+            putExtra("completion_percentage", player.completionPercentage.toString())
+            putExtra("interceptions", player.passingInterceptions.toInt().toString())
+        }
         startActivity(intent)
     }
 
@@ -130,8 +129,7 @@ class MainActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.nav_home -> true
                 R.id.nav_leaderboards -> {
-                    val intent = Intent(this, LeaderboardActivity::class.java)
-                    startActivity(intent)
+                    startActivity(Intent(this, LeaderboardActivity::class.java))
                     true
                 }
                 R.id.nav_players -> {
@@ -139,7 +137,6 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_compare -> {
-                    // Navigate to the CompareActivity now that it is completed.
                     startActivity(Intent(this, CompareActivity::class.java))
                     true
                 }

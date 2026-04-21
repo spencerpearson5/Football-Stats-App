@@ -5,11 +5,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.footballstatsapp.datamodel.Quarterbacks
+import com.example.footballstatsapp.datamodel.Player
 
 class FeaturedPlayerAdapter(
-    private var players: List<Quarterbacks>,
-    private val onPlayerClick: (Quarterbacks) -> Unit
+    private var players: List<Player>,
+    private val onPlayerClick: (Player) -> Unit
 ) : RecyclerView.Adapter<FeaturedPlayerAdapter.FeaturedPlayerViewHolder>() {
 
     class FeaturedPlayerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -35,8 +35,12 @@ class FeaturedPlayerAdapter(
 
         holder.playerNameTextView.text = player.name
         holder.playerTeamTextView.text = player.team
-        holder.playerStatTextView.text =
-            player.passing_touchdowns.toString()
+        
+        // Match the property names in your Player.kt model
+        val yards = player.passingYards.toInt()
+        val touchdowns = player.passingTouchdowns.toInt()
+        
+        holder.playerStatTextView.text = "$yards YDS | $touchdowns TD"
 
         holder.itemView.setOnClickListener {
             onPlayerClick(player)
@@ -45,7 +49,7 @@ class FeaturedPlayerAdapter(
 
     override fun getItemCount(): Int = players.size
 
-    fun updateData(newPlayers: List<Quarterbacks>) {
+    fun updateData(newPlayers: List<Player>) {
         players = newPlayers
         notifyDataSetChanged()
     }
