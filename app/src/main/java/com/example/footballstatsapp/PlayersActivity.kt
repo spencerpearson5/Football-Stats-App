@@ -2,39 +2,40 @@ package com.example.footballstatsapp
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
+import android.view.Gravity
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.footballstatsapp.datamodel.Quarterbacks
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
-/**
- * PlayersActivity displays a scrollable list of all players fetched from the database.
- */
 class PlayersActivity : AppCompatActivity() {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var playerAdapter: PlayerAdapter
     private lateinit var bottomNavigation: BottomNavigationView
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var alphabetBar: LinearLayout
+
+    private var sortedPlayers: List<Quarterbacks> = emptyList()
+    private val letterViews = mutableMapOf<Char, TextView>()
+    private var selectedLetter: Char? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
-        // Apply the saved theme preference before the view is created.
-        
         setContentView(R.layout.activity_players)
 
-        // Initialize the ViewModel to access player data.
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
-        // Link UI components.
-        val recyclerView: RecyclerView = findViewById(R.id.recyclerView)
+        recyclerView = findViewById(R.id.recyclerView)
         bottomNavigation = findViewById(R.id.bottomNavigation)
+        alphabetBar = findViewById(R.id.alphabetBar)
 
-        // Initialize the adapter with an empty list and a click listener for player profiles.
         playerAdapter = PlayerAdapter(emptyList()) { player ->
             val intent = Intent(this, PlayerProfileActivity::class.java)
             intent.putExtra("player_name", player.name)
@@ -43,29 +44,97 @@ class PlayersActivity : AppCompatActivity() {
             intent.putExtra("passing_touchdowns", player.passing_touchdowns)
             intent.putExtra("completions", player.completions)
             intent.putExtra("attempts", player.attempts)
-            intent.putExtra("completion_percentage", player.completion_percentage)
+            intent.putExtra(
+                "completion_percentage",
+                player.completion_percentage
+            )
             intent.putExtra("interceptions", player.interceptions)
             startActivity(intent)
         }
 
-        // Set up the RecyclerView with a vertical layout manager.
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = playerAdapter
 
-        // Collect player data from the ViewModel and update the adapter.
+        setupAlphabetBar()
+
         lifecycleScope.launch {
             viewModel.players.collect { players ->
-                playerAdapter.update_data(players)
+                sortedPlayers = players.sortedBy { it.name.trim().lowercase() }
+                playerAdapter.update_data(sortedPlayers)
             }
         }
 
-        // Configure the bottom navigation bar.
         setupBottomNavigation()
     }
 
-    /**
-     * Sets up the listener for BottomNavigationView and handles activity transitions.
-     */
+    private fun setupAlphabetBar() {
+        val letters = ('A'..'Z')
+
+        for (letter in letters) {
+            val textView = TextView(this).apply {
+                text = letter.toString()
+                textSize = 10f
+                gravity = Gravity.CENTER
+                minWidth = dpToPx(24)
+                minHeight = dpToPx(24)
+                setPadding(0, dpToPx(2), 0, dpToPx(2))
+                setTextColor(resources.getColor(R.color.blue_primary, theme))
+                background = resources.getDrawable(
+                    R.drawable.alphabet_letter_unselected,
+                    theme
+                )
+
+                setOnClickListener {
+                    selectedLetter = letter
+                    updateLetterHighlight()
+                    scrollToLetter(letter)
+                }
+            }
+
+            val params = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            params.topMargin = dpToPx(1)
+            params.bottomMargin = dpToPx(1)
+
+            textView.layoutParams = params
+            letterViews[letter] = textView
+            alphabetBar.addView(textView)
+        }
+    }
+
+    private fun updateLetterHighlight() {
+        for ((letter, textView) in letterViews) {
+            if (letter == selectedLetter) {
+                textView.background = resources.getDrawable(
+                    R.drawable.alphabet_letter_selected,
+                    theme
+                )
+                textView.setTextColor(resources.getColor(R.color.white, theme))
+            } else {
+                textView.background = resources.getDrawable(
+                    R.drawable.alphabet_letter_unselected,
+                    theme
+                )
+                textView.setTextColor(
+                    resources.getColor(R.color.blue_primary, theme)
+                )
+            }
+        }
+    }
+
+    private fun scrollToLetter(letter: Char) {
+        val index = sortedPlayers.indexOfFirst { player ->
+            player.name.trim()
+                .startsWith(letter.toString(), ignoreCase = true)
+        }
+
+        if (index != -1) {
+            recyclerView.scrollToPosition(index)
+        }
+    }
+
     private fun setupBottomNavigation() {
         bottomNavigation.selectedItemId = R.id.nav_players
         bottomNavigation.setOnItemSelectedListener { item ->
@@ -83,7 +152,6 @@ class PlayersActivity : AppCompatActivity() {
                     true
                 }
                 R.id.nav_compare -> {
-                    // Launch the completed CompareActivity.
                     startActivity(Intent(this, CompareActivity::class.java))
                     true
                 }
@@ -94,5 +162,9 @@ class PlayersActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return (dp * resources.displayMetrics.density).toInt()
     }
 }
