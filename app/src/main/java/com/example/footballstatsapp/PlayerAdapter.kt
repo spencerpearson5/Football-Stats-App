@@ -20,7 +20,10 @@ class PlayerAdapter(
         val playerStatText: TextView = view.findViewById(R.id.playerStatText)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder {
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): PlayerViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_player, parent, false)
         return PlayerViewHolder(view)
@@ -31,14 +34,14 @@ class PlayerAdapter(
 
         holder.playerNameText.text = player.name
         holder.playerTeamText.text = player.team
-        holder.playerStatText.text = when(currentDisplayStat) {
-            "Yards"       -> "${player.passing_yards} Yds"
-            "TDs"         -> "${player.passing_touchdowns} TDs"
+        holder.playerStatText.text = when (currentDisplayStat) {
+            "Yards" -> "${player.passing_yards} Yds"
+            "TDs" -> "${player.passing_touchdowns} TDs"
             "Completions" -> "${player.completions} Comp"
-            "Attempts"    -> "${player.attempts} Att"
-            "Percentage"  -> player.completion_percentage // Already has %
-            "Ints"        -> "${player.interceptions} Ints"
-            else          -> player.passing_yards
+            "Attempts" -> "${player.attempts} Att"
+            "Percentage" -> player.completion_percentage
+            "Ints" -> "${player.interceptions} Ints"
+            else -> player.passing_yards
         }
 
         holder.itemView.setOnClickListener {
@@ -48,9 +51,12 @@ class PlayerAdapter(
 
     override fun getItemCount(): Int = players.size
 
-    fun update_data(new_players: List<Quarterbacks>, statType: String = "Yards") {
-        this.players = new_players
-        this.currentDisplayStat = statType
+    fun update_data(
+        newPlayers: List<Quarterbacks>,
+        statType: String = "Yards"
+    ) {
+        players = newPlayers
+        currentDisplayStat = statType
         notifyDataSetChanged()
     }
 }
