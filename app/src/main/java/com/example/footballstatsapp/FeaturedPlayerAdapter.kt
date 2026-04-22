@@ -5,20 +5,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.footballstatsapp.datamodel.Player
+import com.example.footballstatsapp.datamodel.PlayerProfile
 
 class FeaturedPlayerAdapter(
-    private var players: List<Player>,
-    private val onPlayerClick: (Player) -> Unit
+    private var players: List<PlayerProfile>,
+    private val onClick: (PlayerProfile) -> Unit
 ) : RecyclerView.Adapter<FeaturedPlayerAdapter.FeaturedPlayerViewHolder>() {
 
     class FeaturedPlayerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val playerNameTextView: TextView =
-            view.findViewById(R.id.featuredPlayerName)
-        val playerTeamTextView: TextView =
-            view.findViewById(R.id.featuredPlayerTeam)
-        val playerStatTextView: TextView =
-            view.findViewById(R.id.featuredPlayerStat)
+        val playerNameText: TextView = view.findViewById(R.id.playerNameText)
+        val playerTeamText: TextView = view.findViewById(R.id.playerTeamText)
+        val playerStatText: TextView = view.findViewById(R.id.playerStatText)
     }
 
     override fun onCreateViewHolder(
@@ -26,30 +23,27 @@ class FeaturedPlayerAdapter(
         viewType: Int
     ): FeaturedPlayerViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_featured_player, parent, false)
+            .inflate(R.layout.item_player, parent, false)
         return FeaturedPlayerViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: FeaturedPlayerViewHolder, position: Int) {
-        val player = players[position]
+        val playerProfile = players[position]
+        val latestSeason = playerProfile.latestSeason
 
-        holder.playerNameTextView.text = player.name
-        holder.playerTeamTextView.text = player.team
-        
-        // Match the property names in your Player.kt model
-        val yards = player.passingYards.toInt()
-        val touchdowns = player.passingTouchdowns.toInt()
-        
-        holder.playerStatTextView.text = "$yards YDS | $touchdowns TD"
+        holder.playerNameText.text = playerProfile.name
+        holder.playerTeamText.text = latestSeason.team
+        holder.playerStatText.text =
+            "${latestSeason.passingYards.toInt()} Yds"
 
         holder.itemView.setOnClickListener {
-            onPlayerClick(player)
+            onClick(playerProfile)
         }
     }
 
     override fun getItemCount(): Int = players.size
 
-    fun updateData(newPlayers: List<Player>) {
+    fun updateData(newPlayers: List<PlayerProfile>) {
         players = newPlayers
         notifyDataSetChanged()
     }

@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.footballstatsapp.datamodel.Player
+import com.example.footballstatsapp.datamodel.PlayerProfile
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
@@ -22,9 +23,15 @@ class LeaderboardActivity : AppCompatActivity() {
     private lateinit var chartAdapter: LeaderboardChartAdapter
     private lateinit var bottomNavigation: BottomNavigationView
 
-    private val statCategories = listOf("Yards", "TDs", "Completions", "Attempts", "Percentage", "Ints")
+    private val statCategories = listOf(
+        "Yards",
+        "TDs",
+        "Completions",
+        "Attempts",
+        "Percentage",
+        "Ints"
+    )
 
-    // set years
     private val years = (2024 downTo 2005).map { it.toString() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,14 +40,21 @@ class LeaderboardActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
-        // chart setup
         val chartRecyclerView: RecyclerView = findViewById(R.id.chartRecyclerView)
         chartAdapter = LeaderboardChartAdapter(emptyList(), "Yards")
-        chartRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
+        chartRecyclerView.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
         chartRecyclerView.adapter = chartAdapter
 
         val recyclerView: RecyclerView = findViewById(R.id.leaderboardRecyclerView)
-        playerAdapter = PlayerAdapter(emptyList()) { /* Click logic */ }
+        playerAdapter = PlayerAdapter(emptyList()) { player ->
+            val intent = Intent(this, PlayerProfileActivity::class.java)
+            intent.putExtra("player_name", player.name)
+            startActivity(intent)
+        }
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = playerAdapter
 
@@ -60,18 +74,11 @@ class LeaderboardActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         playerAdapter = PlayerAdapter(emptyList()) { player ->
-            val intent = Intent(this, PlayerProfileActivity::class.java).apply {
-                putExtra("player_name", player.name)
-                putExtra("team", player.team)
-                putExtra("passing_yards", player.passingYards.toInt().toString())
-                putExtra("passing_touchdowns", player.passingTouchdowns.toInt().toString())
-                putExtra("completions", player.passingCompletions.toInt().toString())
-                putExtra("attempts", player.passingAttempts.toInt().toString())
-                putExtra("completion_percentage", player.completionPercentage.toString())
-                putExtra("interceptions", player.passingInterceptions.toInt().toString())
-            }
+            val intent = Intent(this, PlayerProfileActivity::class.java)
+            intent.putExtra("player_name", player.name)
             startActivity(intent)
         }
+
         recyclerView.adapter = playerAdapter
     }
 
@@ -79,16 +86,28 @@ class LeaderboardActivity : AppCompatActivity() {
         val statSpinner: Spinner = findViewById(R.id.statSpinner)
         val yearSpinner: Spinner = findViewById(R.id.yearSpinner)
 
-        // for stat
-        statSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, statCategories)
+        statSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            statCategories
+        )
 
-        // for year
-        yearSpinner.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, years)
+        yearSpinner.adapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            years
+        )
 
         val itemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
                 refreshData()
             }
+
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
@@ -96,11 +115,10 @@ class LeaderboardActivity : AppCompatActivity() {
         yearSpinner.onItemSelectedListener = itemSelectedListener
     }
 
-    //get current filter and sorting selections
     private fun refreshData() {
         val statSpinner: Spinner = findViewById(R.id.statSpinner)
         val yearSpinner: Spinner = findViewById(R.id.yearSpinner)
-        
+
         val selectedStat = statSpinner.selectedItem?.toString() ?: "Yards"
         val selectedYear = yearSpinner.selectedItem?.toString()?.toIntOrNull() ?: 2024
 
@@ -108,26 +126,39 @@ class LeaderboardActivity : AppCompatActivity() {
     }
 
     private fun updateLeaderboard(category: String, year: Int) {
-        val allPlayers = viewModel.players.value
+        val allProfiles = viewModel.players.value
 
-        // filter by the selected year
-        // sort by the selected stat category
-        val filteredAndSortedList = allPlayers
-            .filter { it.season == year }
-            .let { list ->
-                when (category) {
-                    "Yards" -> list.sortedByDescending { it.passingYards }
-                    "TDs" -> list.sortedByDescending { it.passingTouchdowns }
-                    "Percentage" -> list.sortedByDescending { it.completionPercentage }
-                    "Ints" -> list.sortedByDescending { it.passingInterceptions }
-                    "Completions" -> list.sortedByDescending { it.passingCompletions }
-                    "Attempts" -> list.sortedByDescending { it.passingAttempts }
-                    else -> list
-                }
+        val seasonRowsForYear: List<Player> = allProfiles.mapNotNull { profile ->
+            profile.seasons.firstOrNull { it.season == year }
+        }
+
+        val sortedSeasonRows = when (category) {
+            "Yards" -> seasonRowsForYear.sortedByDescending { it.passingYards }
+            "TDs" -> seasonRowsForYear.sortedByDescending { it.passingTouchdowns }
+            "Percentage" -> seasonRowsForYear.sortedByDescending {
+                it.completionPercentage
             }
+            "Ints" -> seasonRowsForYear.sortedByDescending {
+                it.passingInterceptions
+            }
+            "Completions" -> seasonRowsForYear.sortedByDescending {
+                it.passingCompletions
+            }
+            "Attempts" -> seasonRowsForYear.sortedByDescending {
+                it.passingAttempts
+            }
+            else -> seasonRowsForYear
+        }
 
-        playerAdapter.update_data(filteredAndSortedList, category)
-        chartAdapter.updateData(filteredAndSortedList.take(10), category)
+        val leaderboardProfiles: List<PlayerProfile> = sortedSeasonRows.map { player ->
+            PlayerProfile(
+                name = player.name,
+                seasons = listOf(player)
+            )
+        }
+
+        playerAdapter.update_data(leaderboardProfiles, category)
+        chartAdapter.updateData(sortedSeasonRows.take(10), category)
     }
 
     private fun setupBottomNavigation() {
@@ -135,9 +166,18 @@ class LeaderboardActivity : AppCompatActivity() {
         bottomNavigation.selectedItemId = R.id.nav_leaderboards
         bottomNavigation.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.nav_home -> { startActivity(Intent(this, MainActivity::class.java)); true }
-                R.id.nav_players -> { startActivity(Intent(this, PlayersActivity::class.java)); true }
-                R.id.nav_compare -> { startActivity(Intent(this, CompareActivity::class.java)); true }
+                R.id.nav_home -> {
+                    startActivity(Intent(this, MainActivity::class.java))
+                    true
+                }
+                R.id.nav_players -> {
+                    startActivity(Intent(this, PlayersActivity::class.java))
+                    true
+                }
+                R.id.nav_compare -> {
+                    startActivity(Intent(this, CompareActivity::class.java))
+                    true
+                }
                 R.id.nav_leaderboards -> true
                 R.id.nav_settings -> {
                     startActivity(Intent(this, SettingsActivity::class.java))

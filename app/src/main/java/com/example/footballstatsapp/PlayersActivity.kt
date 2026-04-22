@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.footballstatsapp.datamodel.Player
+import com.example.footballstatsapp.datamodel.PlayerProfile
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.coroutines.launch
 
@@ -22,7 +22,7 @@ class PlayersActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var alphabetBar: LinearLayout
 
-    private var sortedPlayers: List<Player> = emptyList()
+    private var sortedPlayers: List<PlayerProfile> = emptyList()
     private val letterViews = mutableMapOf<Char, TextView>()
     private var selectedLetter: Char? = null
 
@@ -39,13 +39,6 @@ class PlayersActivity : AppCompatActivity() {
         playerAdapter = PlayerAdapter(emptyList()) { player ->
             val intent = Intent(this, PlayerProfileActivity::class.java)
             intent.putExtra("player_name", player.name)
-            intent.putExtra("team", player.team)
-            intent.putExtra("passing_yards", player.passingYards.toInt().toString())
-            intent.putExtra("passing_touchdowns", player.passingTouchdowns.toInt().toString())
-            intent.putExtra("completions", player.passingCompletions.toInt().toString())
-            intent.putExtra("attempts", player.passingAttempts.toInt().toString())
-            intent.putExtra("completion_percentage", player.completionPercentage.toString())
-            intent.putExtra("interceptions", player.passingInterceptions.toInt().toString())
             startActivity(intent)
         }
 
@@ -123,8 +116,7 @@ class PlayersActivity : AppCompatActivity() {
 
     private fun scrollToLetter(letter: Char) {
         val index = sortedPlayers.indexOfFirst { player ->
-            player.name.trim()
-                .startsWith(letter.toString(), ignoreCase = true)
+            player.name.trim().startsWith(letter.toString(), ignoreCase = true)
         }
 
         if (index != -1) {

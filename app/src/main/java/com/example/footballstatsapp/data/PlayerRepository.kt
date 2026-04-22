@@ -6,7 +6,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
-
+import com.example.footballstatsapp.datamodel.PlayerProfile
 object PlayerRepository {
 
     private val database = FirebaseDatabase.getInstance().getReference("seasons")
@@ -34,28 +34,39 @@ object PlayerRepository {
     }
 
 
-    fun get_qbs(): Flow<List<Player>> = callbackFlow {
-        val listener = database.addValueEventListener(object : com.google.firebase.database.ValueEventListener {
-            override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
-                val allPlayers = mutableListOf<Player>()
+    fun getQbProfiles(): Flow<List<PlayerProfile>> = callbackFlow {
+        val listener = database.addValueEventListener(
+            object : com.google.firebase.database.ValueEventListener {
+                override fun onDataChange(snapshot: com.google.firebase.database.DataSnapshot) {
+                    val allPlayers = mutableListOf<Player>()
 
-                //iterate through desired years
-                for (yearSnapshot in snapshot.children) {
-                    //loop for all players in that season
-                    for (playerSnapshot in yearSnapshot.children) {
-                        val player = playerSnapshot.getValue(Player::class.java)
-                        if (player != null) {
-                            allPlayers.add(player)
+                    for (yearSnapshot in snapshot.children) {
+                        for (playerSnapshot in yearSnapshot.children) {
+                            val player = playerSnapshot.getValue(Player::class.java)
+                            if (player != null) {
+                                allPlayers.add(player)
+                            }
                         }
                     }
-                }
-                trySend(allPlayers)
-            }
 
-            override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
-                close(error.toException())
+                    val groupedPlayers = allPlayers
+                        .groupBy { it.name.trim() }
+                        .map { (name, seasons) ->
+                            PlayerProfile(
+                                name = name,
+                                seasons = seasons.sortedByDescending { it.season }
+                            )
+                        }
+                        .sortedBy { it.name }
+
+                    trySend(groupedPlayers)
+                }
+
+                override fun onCancelled(error: com.google.firebase.database.DatabaseError) {
+                    close(error.toException())
+                }
             }
-        })
+        )
 
         awaitClose { database.removeEventListener(listener) }
     }
