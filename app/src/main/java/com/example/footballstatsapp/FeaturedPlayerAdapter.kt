@@ -13,9 +13,9 @@ class FeaturedPlayerAdapter(
 ) : RecyclerView.Adapter<FeaturedPlayerAdapter.FeaturedPlayerViewHolder>() {
 
     class FeaturedPlayerViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val playerNameText: TextView = view.findViewById(R.id.playerNameText)
-        val playerTeamText: TextView = view.findViewById(R.id.playerTeamText)
-        val playerStatText: TextView = view.findViewById(R.id.playerStatText)
+        val playerNameText: TextView = view.findViewById(R.id.featuredPlayerName)
+        val playerTeamText: TextView = view.findViewById(R.id.featuredPlayerTeam)
+        val playerStatText: TextView = view.findViewById(R.id.featuredPlayerStat)
     }
 
     override fun onCreateViewHolder(
@@ -23,7 +23,7 @@ class FeaturedPlayerAdapter(
         viewType: Int
     ): FeaturedPlayerViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_player, parent, false)
+            .inflate(R.layout.item_featured_player, parent, false)
         return FeaturedPlayerViewHolder(view)
     }
 
@@ -34,7 +34,7 @@ class FeaturedPlayerAdapter(
         holder.playerNameText.text = playerProfile.name
         holder.playerTeamText.text = latestSeason.team
         holder.playerStatText.text =
-            "${latestSeason.passingYards.toInt()} Yds"
+            "${latestSeason.passingTouchdowns.toInt()} TDs"
 
         holder.itemView.setOnClickListener {
             onClick(playerProfile)

@@ -2,9 +2,9 @@
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="175dp"
-    android:layout_height="match_parent"
-    android:layout_marginEnd="12dp"
+    android:layout_width="170dp"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="6dp"
     android:clickable="true"
     android:focusable="true"
     app:cardBackgroundColor="#E3F2FD"
@@ -15,13 +15,13 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="18dp">
+        android:padding="20dp">
 
         <View
-            android:layout_width="36dp"
-            android:layout_height="5dp"
+            android:layout_width="32dp"
+            android:layout_height="4dp"
             android:layout_marginBottom="14dp"
             android:background="#1E3A8A" />
 
@@ -29,26 +29,25 @@
             android:id="@+id/featuredPlayerName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxLines="2"
             android:ellipsize="end"
+            android:maxLines="2"
             android:text="Player Name"
             android:textColor="@android:color/black"
-            android:textSize="20sp"
+            android:textSize="19sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/featuredPlayerTeam"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
+            android:layout_marginTop="8dp"
             android:text="Team"
             android:textColor="#666666"
-            android:textSize="14sp" />
+            android:textSize="13sp" />
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="12dp" />
 
         <View
             android:layout_width="match_parent"
@@ -61,16 +60,16 @@
             android:layout_height="wrap_content"
             android:text="Passing TDs"
             android:textColor="#666666"
-            android:textSize="13sp" />
+            android:textSize="12sp" />
 
         <TextView
             android:id="@+id/featuredPlayerStat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
+            android:layout_marginTop="6dp"
             android:text="0"
             android:textColor="#1E3A8A"
-            android:textSize="24sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
     </LinearLayout>
