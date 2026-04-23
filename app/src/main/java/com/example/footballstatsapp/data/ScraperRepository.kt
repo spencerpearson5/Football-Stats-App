@@ -88,27 +88,27 @@ class ScraperRepository {
             for (i in nameRows.indices) {
                 val nameCell = nameRows[i].select("td").last()
 
-                // 1. Get the ESPN Link: "/nfl/player/_/id/4038944/joe-burrow"
+
                 val espnLink = nameCell?.select("a")?.attr("href") ?: ""
 
-                // 2. Extract "joe-burrow"
+
                 val slugName = espnLink.substringAfterLast("/")
 
-                // 3. Optional: Convert "joe-burrow" to "Joe Burrow" for the DB
+
                 val formattedName = slugName.replace("-", " ")
                     .split(" ")
                     .joinToString(" ") { it.replaceFirstChar { char -> char.uppercase() } }
 
                 val team = nameCell?.select("span")?.text() ?: ""
 
-                // 4. Scrape the image using the slug
+
                 val imageUrl = scrapePlayerImage(slugName)
 
                 val cols = statRows[i].select("td")
 
                 if (cols.size >= 13 && slugName.isNotEmpty()) {
                     players.add(Player(
-                        name = formattedName, // Now saves as "Joe Burrow"
+                        name = formattedName, //saves as "Joe Burrow" instead of "J. Burrow"
                         team = team,
                         season = year,
                         imageUrl = imageUrl,
@@ -122,7 +122,7 @@ class ScraperRepository {
                     Log.d("ScraperDebug", "Saved: $formattedName with image: $imageUrl")
                 }
 
-                // Polite delay to prevent IP blocking
+
                 Thread.sleep(500)
             }
         } catch (e: Exception) {
