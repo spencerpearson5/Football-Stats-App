@@ -30,11 +30,9 @@ class SettingsActivity : AppCompatActivity() {
         darkModeSwitch = findViewById(R.id.darkModeSwitch)
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
-        // set to light mode by default
         val isDarkMode = sharedPreferences.getBoolean("dark_mode", false)
         
-        // disable the listener for the theme change
-        darkModeSwitch.setOnCheckedChangeListener(null)
+        //  switch the state
         darkModeSwitch.isChecked = isDarkMode
 
         refreshStatsButton.setOnClickListener {
@@ -56,14 +54,17 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        // handle the switching of themes
-        darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            if (sharedPreferences.getBoolean("dark_mode", false) != isChecked) {
-                sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply()
+        // set listener for switching between themes
+        darkModeSwitch.setOnClickListener {
+            val isChecked = darkModeSwitch.isChecked
+            val currentPref = sharedPreferences.getBoolean("dark_mode", false)
+            
+            if (isChecked != currentPref) {
+                sharedPreferences.edit().putBoolean("dark_mode", isChecked).commit()
+
+                val mode = if (isChecked) {AppCompatDelegate.MODE_NIGHT_YES } else { AppCompatDelegate.MODE_NIGHT_NO }
                 
-                AppCompatDelegate.setDefaultNightMode(
-                    if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-                )
+                AppCompatDelegate.setDefaultNightMode(mode)
             }
         }
 

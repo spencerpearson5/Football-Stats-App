@@ -7,7 +7,7 @@
     android:layout_marginHorizontal="6dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="#E3F2FD"
+    app:cardBackgroundColor="#ebf4fa"
     app:cardCornerRadius="18dp"
     app:cardElevation="4dp"
     app:strokeColor="#D9D9D9"
@@ -20,8 +20,9 @@
         android:padding="20dp">
 
         <View
-            android:layout_width="32dp"
-            android:layout_height="4dp"
+            android:id="@+id/featuredPlayerColorBar"
+            android:layout_width="48dp"
+            android:layout_height="8dp"
             android:layout_marginBottom="14dp"
             android:background="#1E3A8A" />
 

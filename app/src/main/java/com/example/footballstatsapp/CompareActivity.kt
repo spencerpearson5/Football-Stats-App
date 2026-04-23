@@ -229,7 +229,7 @@ class CompareActivity : AppCompatActivity() {
             "KC"  -> "#E31837" // Chiefs
             "LAC", "SD" -> "#0080C6" // Chargers
             "LAR", "STL" -> "#003594" // Rams
-            "LV", "OAK"  -> "#000000" // Raiders
+            "LV", "OAK"  -> "#777f85" // Raiders
             "MIA" -> "#008E97" // Dolphins
             "MIN" -> "#4F2683" // Vikings
             "NE"  -> "#002244" // Patriots
@@ -242,7 +242,7 @@ class CompareActivity : AppCompatActivity() {
             "SEA" -> "#002244" // Seahawks
             "TB"  -> "#D50A0A" // Buccaneers
             "TEN" -> "#0C2340" // Titans
-            "WAS" -> "#773141" // Commanders
+            "WAS", "WSH" -> "#773141" // Commanders
             else -> "#A5ACAF"  // Default NFL Gray
         }
         return Color.parseColor(colorHex)

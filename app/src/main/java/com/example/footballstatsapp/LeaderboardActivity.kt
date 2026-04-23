@@ -150,11 +150,10 @@ class LeaderboardActivity : AppCompatActivity() {
             else -> seasonRowsForYear
         }
 
-        val leaderboardProfiles: List<PlayerProfile> = sortedSeasonRows.map { player ->
-            PlayerProfile(
-                name = player.name,
-                seasons = listOf(player)
-            )
+
+        // fixing previous error of every player saying one season, now says correct number
+        val leaderboardProfiles: List<PlayerProfile> = sortedSeasonRows.mapNotNull { player ->
+            allProfiles.find { it.name == player.name }
         }
 
         playerAdapter.update_data(leaderboardProfiles, category)

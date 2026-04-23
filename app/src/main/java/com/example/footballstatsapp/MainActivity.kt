@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.footballstatsapp.datamodel.PlayerProfile
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -45,11 +45,8 @@ class MainActivity : AppCompatActivity() {
             navigateToProfile(player)
         }
 
-        featuredRecyclerView.layoutManager = LinearLayoutManager(
-            this,
-            LinearLayoutManager.HORIZONTAL,
-            false
-        )
+        // grid layout to have two featured stacked on top of 2
+        featuredRecyclerView.layoutManager = GridLayoutManager(this, 2)
         featuredRecyclerView.adapter = featuredPlayerAdapter
 
         lifecycleScope.launch {
@@ -57,7 +54,8 @@ class MainActivity : AppCompatActivity() {
                 allPlayers = playerList
 
                 if (allPlayers.isNotEmpty()) {
-                    val featuredPlayers = allPlayers.shuffled().take(2)
+                    //  4 random players to feature on the home screen
+                    val featuredPlayers = allPlayers.shuffled().take(4)
                     featuredPlayerAdapter.updateData(featuredPlayers)
                 }
 
