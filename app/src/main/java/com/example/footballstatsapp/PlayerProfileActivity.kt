@@ -161,10 +161,10 @@ class PlayerProfileActivity : AppCompatActivity() {
                 orientation = LinearLayout.VERTICAL
                 gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
                 layoutParams = LinearLayout.LayoutParams(
-                    dpToPx(56),
+                    dpToPx(42),
                     LinearLayout.LayoutParams.MATCH_PARENT
                 ).apply {
-                    marginEnd = dpToPx(10)
+                    marginEnd = dpToPx(6)
                 }
             }
 
@@ -186,7 +186,7 @@ class PlayerProfileActivity : AppCompatActivity() {
 
             val barView = View(this).apply {
                 layoutParams = LinearLayout.LayoutParams(
-                    dpToPx(28),
+                    dpToPx(20),
                     dpToPx(barHeightDp)
                 ).apply {
                     topMargin = dpToPx(8)
