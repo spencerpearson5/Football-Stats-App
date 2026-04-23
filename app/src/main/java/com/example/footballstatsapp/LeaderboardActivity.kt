@@ -32,7 +32,7 @@ class LeaderboardActivity : AppCompatActivity() {
         "Ints"
     )
 
-    private val years = (2024 downTo 2005).map { it.toString() }
+    private val years = (2025 downTo 2006).map { it.toString() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

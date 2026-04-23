@@ -5,6 +5,7 @@ data class Player(
     val name: String = "",
     val team: String = "",
     val season: Int = 0,
+    val imageUrl: String = "",
     val passingYards: Double = 0.0,
     val passingTouchdowns: Double = 0.0,
     val passingCompletions: Double = 0.0,

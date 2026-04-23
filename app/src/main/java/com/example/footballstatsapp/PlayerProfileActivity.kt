@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.footballstatsapp.datamodel.Player
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.database.*
+import android.widget.ImageView
+import com.bumptech.glide.Glide
 
 class PlayerProfileActivity : AppCompatActivity() {
 
@@ -21,6 +23,9 @@ class PlayerProfileActivity : AppCompatActivity() {
 
         val playerNameText: TextView = findViewById(R.id.playerNameText)
         val teamText: TextView = findViewById(R.id.teamText)
+
+        val playerImage: com.google.android.material.imageview.ShapeableImageView = findViewById(R.id.playerImage)
+
         val passingYardsText: TextView = findViewById(R.id.passingYardsText)
         val passingTDText: TextView = findViewById(R.id.passingTDText)
         val completionsText: TextView = findViewById(R.id.completionsText)
@@ -50,7 +55,19 @@ class PlayerProfileActivity : AppCompatActivity() {
                         matchingSeasons.maxByOrNull { it.season } ?: matchingSeasons.first()
 
                     playerNameText.text = latestSeason.name
-                    teamText.text = "${latestSeason.team} • ${latestSeason.season}"
+                    val fullTeamName = getTeamFullName(latestSeason.team)
+                    teamText.text = "$fullTeamName • ${latestSeason.season}"
+
+                    if (latestSeason.imageUrl.isNotEmpty()) {
+                        Glide.with(this@PlayerProfileActivity)
+                            .load(latestSeason.imageUrl)
+                            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
+                            .override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL)
+                            .into(playerImage)
+                    } else {
+                        playerImage.setImageDrawable(null)
+                    }
+
                     passingYardsText.text = latestSeason.passingYards.toInt().toString()
                     passingTDText.text = latestSeason.passingTouchdowns.toInt().toString()
                     completionsText.text = latestSeason.passingCompletions.toInt().toString()
@@ -142,6 +159,44 @@ class PlayerProfileActivity : AppCompatActivity() {
 
                 else -> false
             }
+        }
+    }
+
+    private fun getTeamFullName(initials: String?): String {
+        return when (initials?.uppercase()) {
+            "ARI" -> "Cardinals"
+            "ATL" -> "Falcons"
+            "BAL" -> "Ravens"
+            "BUF" -> "Bills"
+            "CAR" -> "Panthers"
+            "CHI" -> "Bears"
+            "CIN" -> "Bengals"
+            "CLE" -> "Browns"
+            "DAL" -> "Cowboys"
+            "DEN" -> "Broncos"
+            "DET" -> "Lions"
+            "GB"  -> "Packers"
+            "HOU" -> "Texans"
+            "IND" -> "Colts"
+            "JAX" -> "Jaguars"
+            "KC"  -> "Chiefs"
+            "LAC", "SD" -> "Chargers"
+            "LAR", "STL" -> "Rams"
+            "LV", "OAK"  -> "Raiders"
+            "MIA" -> "Dolphins"
+            "MIN" -> "Vikings"
+            "NE"  -> "Patriots"
+            "NO"  -> "Saints"
+            "NYG" -> "Giants"
+            "NYJ" -> "Jets"
+            "PHI" -> "Eagles"
+            "PIT" -> "Steelers"
+            "SF"  -> "49ers"
+            "SEA" -> "Seahawks"
+            "TB"  -> "Buccaneers"
+            "TEN" -> "Titans"
+            "WAS" -> "Commanders"
+            else -> initials ?: "Team Unknown"
         }
     }
 }

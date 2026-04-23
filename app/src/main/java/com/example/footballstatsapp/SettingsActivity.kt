@@ -38,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
 
             lifecycleScope.launch {
                 val scraper = ScraperRepository()
-                val currentYear = 2024
+                val currentYear = 2025
 
                 try {
                     for (year in currentYear downTo (currentYear - 19)) {
