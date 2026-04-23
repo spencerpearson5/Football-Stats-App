@@ -62,7 +62,9 @@
             android:padding="16dp"
             android:popupBackground="?attr/colorSurface"
             android:textColor="?android:attr/textColorPrimary"
-            android:textColorHint="?android:attr/textColorSecondary" />
+            android:textColorHint="?android:attr/textColorSecondary"
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <Button
             android:id="@+id/searchButton"
