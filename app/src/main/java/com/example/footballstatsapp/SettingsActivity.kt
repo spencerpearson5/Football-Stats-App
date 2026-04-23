@@ -30,18 +30,22 @@ class SettingsActivity : AppCompatActivity() {
         darkModeSwitch = findViewById(R.id.darkModeSwitch)
         bottomNavigation = findViewById(R.id.bottomNavigation)
 
+        // set to light mode by default
         val isDarkMode = sharedPreferences.getBoolean("dark_mode", false)
+        
+        // disable the listener for the theme change
+        darkModeSwitch.setOnCheckedChangeListener(null)
         darkModeSwitch.isChecked = isDarkMode
 
         refreshStatsButton.setOnClickListener {
-            Toast.makeText(this, "Updating 20 years of stats...", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Updating stats...", Toast.LENGTH_LONG).show()
 
             lifecycleScope.launch {
                 val scraper = ScraperRepository()
                 val currentYear = 2025
 
                 try {
-                    for (year in currentYear downTo (currentYear - 19)) {
+                    for (year in currentYear downTo (currentYear - 21)) {
                         scraper.syncSeason(year)
                         delay(3000)
                     }
@@ -52,11 +56,15 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
+        // handle the switching of themes
         darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply()
-            AppCompatDelegate.setDefaultNightMode(
-                if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
-            )
+            if (sharedPreferences.getBoolean("dark_mode", false) != isChecked) {
+                sharedPreferences.edit().putBoolean("dark_mode", isChecked).apply()
+                
+                AppCompatDelegate.setDefaultNightMode(
+                    if (isChecked) AppCompatDelegate.MODE_NIGHT_YES else AppCompatDelegate.MODE_NIGHT_NO
+                )
+            }
         }
 
         setupBottomNavigation()
