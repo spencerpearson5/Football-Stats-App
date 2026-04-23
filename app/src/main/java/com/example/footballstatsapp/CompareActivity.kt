@@ -165,8 +165,8 @@ class CompareActivity : AppCompatActivity() {
             
             player1Name.text = p1.name
             player2Name.text = p2.name
-            player1Team.text = s1.team
-            player2Team.text = s2.team
+            player1Team.text = getTeamFullName(s1.team)
+            player2Team.text = getTeamFullName(s2.team)
             
             val color1 = getTeamColor(s1.team)
             val color2 = getTeamColor(s2.team)
@@ -218,7 +218,7 @@ class CompareActivity : AppCompatActivity() {
             "CAR" -> "#0085CA" // Panthers
             "CHI" -> "#0B162A" // Bears
             "CIN" -> "#FB4F14" // Bengals
-            "CLE" -> "#311D00" // Browns
+            "CLE" -> "#6e4408" // Browns
             "DAL" -> "#003594" // Cowboys
             "DEN" -> "#FB4F14" // Broncos
             "DET" -> "#0076B6" // Lions
@@ -232,7 +232,7 @@ class CompareActivity : AppCompatActivity() {
             "LV", "OAK"  -> "#777f85" // Raiders
             "MIA" -> "#008E97" // Dolphins
             "MIN" -> "#4F2683" // Vikings
-            "NE"  -> "#002244" // Patriots
+            "NE"  -> "#090957" // Patriots
             "NO"  -> "#D3BC8D" // Saints
             "NYG" -> "#0B2265" // Giants
             "NYJ" -> "#125740" // Jets
@@ -241,13 +241,50 @@ class CompareActivity : AppCompatActivity() {
             "SF"  -> "#AA0000" // 49ers
             "SEA" -> "#002244" // Seahawks
             "TB"  -> "#D50A0A" // Buccaneers
-            "TEN" -> "#0C2340" // Titans
+            "TEN" -> "#5da6f0" // Titans
             "WAS", "WSH" -> "#773141" // Commanders
             else -> "#A5ACAF"  // Default NFL Gray
         }
         return Color.parseColor(colorHex)
     }
-
+    
+    private fun getTeamFullName(initials: String?): String {
+        return when (initials?.uppercase()) {
+            "ARI" -> "Cardinals"
+            "ATL" -> "Falcons"
+            "BAL" -> "Ravens"
+            "BUF" -> "Bills"
+            "CAR" -> "Panthers"
+            "CHI" -> "Bears"
+            "CIN" -> "Bengals"
+            "CLE" -> "Browns"
+            "DAL" -> "Cowboys"
+            "DEN" -> "Broncos"
+            "DET" -> "Lions"
+            "GB" -> "Packers"
+            "HOU" -> "Texans"
+            "IND" -> "Colts"
+            "JAX" -> "Jaguars"
+            "KC" -> "Chiefs"
+            "LAC", "SD" -> "Chargers"
+            "LAR", "STL" -> "Rams"
+            "LV", "OAK" -> "Raiders"
+            "MIA" -> "Dolphins"
+            "MIN" -> "Vikings"
+            "NE" -> "Patriots"
+            "NO" -> "Saints"
+            "NYG" -> "Giants"
+            "NYJ" -> "Jets"
+            "PHI" -> "Eagles"
+            "PIT" -> "Steelers"
+            "SF" -> "49ers"
+            "SEA" -> "Seahawks"
+            "TB" -> "Buccaneers"
+            "TEN" -> "Titans"
+            "WAS", "WSH" -> "Commanders"
+            else -> initials ?: "Team Unknown"
+        }
+    }
 
     // bottom nav bar
     private fun setupBottomNavigation() {

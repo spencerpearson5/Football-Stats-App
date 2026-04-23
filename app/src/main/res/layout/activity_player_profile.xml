@@ -46,8 +46,9 @@
                         android:orientation="vertical">
 
                         <View
-                            android:layout_width="42dp"
-                            android:layout_height="5dp"
+                            android:id="@+id/playerColorBar"
+                            android:layout_width="80dp"
+                            android:layout_height="8dp"
                             android:layout_marginBottom="16dp"
                             android:background="?attr/colorPrimary" />
 
@@ -353,14 +354,22 @@
             </LinearLayout>
 
             <TextView
+                android:id="@+id/graphTitleText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="28dp"
                 android:layout_marginBottom="12dp"
-                android:text="Passing TD Graph"
+                android:text="Career Stat Graph"
                 android:textColor="?android:attr/textColorPrimary"
                 android:textSize="20sp"
                 android:textStyle="bold" />
+
+            <Spinner
+                android:id="@+id/graphStatSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="?attr/colorPrimary" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -386,9 +395,10 @@
                     android:padding="20dp">
 
                     <TextView
+                        android:id="@+id/graphLabelText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Touchdowns by Season"
+                        android:text="Stat by Season"
                         android:textColor="?android:attr/textColorSecondary"
                         android:textSize="14sp" />
 

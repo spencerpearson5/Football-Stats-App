@@ -32,7 +32,7 @@ class LeaderboardActivity : AppCompatActivity() {
         "Ints"
     )
 
-    private val years = (2025 downTo 2006).map { it.toString() }
+    private val years = (2025 downTo 2004).map { it.toString() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +58,6 @@ class LeaderboardActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = playerAdapter
 
-        setupRecyclerView()
         setupSpinners()
         setupBottomNavigation()
 
@@ -67,19 +66,6 @@ class LeaderboardActivity : AppCompatActivity() {
                 refreshData()
             }
         }
-    }
-
-    private fun setupRecyclerView() {
-        val recyclerView: RecyclerView = findViewById(R.id.leaderboardRecyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        playerAdapter = PlayerAdapter(emptyList()) { player ->
-            val intent = Intent(this, PlayerProfileActivity::class.java)
-            intent.putExtra("player_name", player.name)
-            startActivity(intent)
-        }
-
-        recyclerView.adapter = playerAdapter
     }
 
     private fun setupSpinners() {
@@ -97,6 +83,12 @@ class LeaderboardActivity : AppCompatActivity() {
             android.R.layout.simple_spinner_dropdown_item,
             years
         )
+
+        // Set default selection to 2025
+        val defaultYearIndex = years.indexOf("2025")
+        if (defaultYearIndex != -1) {
+            yearSpinner.setSelection(defaultYearIndex)
+        }
 
         val itemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
@@ -120,27 +112,27 @@ class LeaderboardActivity : AppCompatActivity() {
         val yearSpinner: Spinner = findViewById(R.id.yearSpinner)
 
         val selectedStat = statSpinner.selectedItem?.toString() ?: "Yards"
-        val selectedYear = yearSpinner.selectedItem?.toString()?.toIntOrNull() ?: 2024
+        val selectedYear = yearSpinner.selectedItem?.toString()?.toIntOrNull() ?: 2025
 
         updateLeaderboard(selectedStat, selectedYear)
     }
+
 
     private fun updateLeaderboard(category: String, year: Int) {
         val allProfiles = viewModel.players.value
 
         val seasonRowsForYear: List<Player> = allProfiles.mapNotNull { profile ->
-            profile.seasons.firstOrNull { it.season == year }
+            profile.seasons.find { it.season == year }
         }
 
+        // displaying stats for selected year
         val sortedSeasonRows = when (category) {
             "Yards" -> seasonRowsForYear.sortedByDescending { it.passingYards }
             "TDs" -> seasonRowsForYear.sortedByDescending { it.passingTouchdowns }
             "Percentage" -> seasonRowsForYear.sortedByDescending {
                 it.completionPercentage
             }
-            "Ints" -> seasonRowsForYear.sortedByDescending {
-                it.passingInterceptions
-            }
+            "Ints" -> seasonRowsForYear.sortedByDescending{ it.passingInterceptions } 
             "Completions" -> seasonRowsForYear.sortedByDescending {
                 it.passingCompletions
             }
@@ -153,11 +145,17 @@ class LeaderboardActivity : AppCompatActivity() {
 
         // fixing previous error of every player saying one season, now says correct number
         val leaderboardProfiles: List<PlayerProfile> = sortedSeasonRows.mapNotNull { player ->
-            allProfiles.find { it.name == player.name }
+            allProfiles.find { it.name == player.name }?.let { originalProfile ->
+                // overriding to show the stats of the selected season instead of the players
+                // most recent season
+                originalProfile.copy(seasons = originalProfile.seasons).apply {
+                    displaySeasonOverride = player
+                }
+            }
         }
 
         playerAdapter.update_data(leaderboardProfiles, category)
-        chartAdapter.updateData(sortedSeasonRows.take(10), category)
+        chartAdapter.updateData(sortedSeasonRows.take(15), category)
     }
 
     private fun setupBottomNavigation() {

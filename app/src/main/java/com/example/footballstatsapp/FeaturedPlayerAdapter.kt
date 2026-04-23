@@ -29,7 +29,7 @@ class FeaturedPlayerAdapter(
             "CAR" -> "#0085CA" // Panthers
             "CHI" -> "#0B162A" // Bears
             "CIN" -> "#FB4F14" // Bengals
-            "CLE" -> "#311D00" // Browns
+            "CLE" -> "#6e4408" // Browns
             "DAL" -> "#003594" // Cowboys
             "DEN" -> "#FB4F14" // Broncos
             "DET" -> "#0076B6" // Lions
@@ -43,7 +43,7 @@ class FeaturedPlayerAdapter(
             "LV", "OAK"  -> "#777f85" // Raiders
             "MIA" -> "#008E97" // Dolphins
             "MIN" -> "#4F2683" // Vikings
-            "NE"  -> "#002244" // Patriots
+            "NE"  -> "#090957" // Patriots
             "NO"  -> "#D3BC8D" // Saints
             "NYG" -> "#0B2265" // Giants
             "NYJ" -> "#125740" // Jets
@@ -52,7 +52,7 @@ class FeaturedPlayerAdapter(
             "SF"  -> "#AA0000" // 49ers
             "SEA" -> "#002244" // Seahawks
             "TB"  -> "#D50A0A" // Buccaneers
-            "TEN" -> "#0C2340" // Titans
+            "TEN" -> "#5da6f0" // Titans
             "WAS","WSH" -> "#773141" // Commanders
             else -> "#A5ACAF"  // Default NFL Gray
         }

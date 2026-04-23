@@ -17,11 +17,29 @@ class ScraperRepository {
             .replace(" ", "-")
     }
 
-
+    // dealing with special names, still doesnt work for beathard, pryor, feeley, and gray
+    // don't know why
+    private fun fixSpecialName(urlName: String): String {
+        return when (urlName.lowercase().trim()) {
+            "robert-griffin-iii" -> "robert-griffin-iii"
+            "gardner-minshew-ii" -> "gardner-minshew"
+            "michael-penix-jr" -> "michael-penix-jr"
+            "anthony-richardson-sr" -> "anthony-richardson"
+            "quinn-gray-sr" -> "quinn-gray"
+            "terrelle-pryor-sr" -> "terrelle-pryor"
+            "cj-stroud" -> "c-j-stroud"
+            "cj-beathard" -> "c-j-beathard"
+            "aj-feeley" -> "a-j-feeley"
+            "aidan-oconnell" -> "aidan-o-connell"
+            "pj-walker" -> "phillip-walker"
+            else -> urlName
+        }
+    }
     private suspend fun scrapePlayerImage(urlName: String): String = withContext(Dispatchers.IO) {
         if (urlName.isEmpty()) return@withContext ""
 
-        val url = "https://www.nfl.com/players/$urlName/"
+        val fixedName = fixSpecialName(urlName)
+        val url = "https://www.nfl.com/players/$fixedName/"
 
         return@withContext try {
             Log.d("ScraperDebug", "Connecting to NFL.com for: $urlName")
