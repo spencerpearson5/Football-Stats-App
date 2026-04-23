@@ -3,37 +3,59 @@ package com.example.footballstatsapp
 import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.target.Target
 import com.example.footballstatsapp.datamodel.Player
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.database.*
-import android.widget.ImageView
-import com.bumptech.glide.Glide
+import com.google.android.material.imageview.ShapeableImageView
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class PlayerProfileActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigation: BottomNavigationView
+    private lateinit var seasonSpinner: Spinner
+    private lateinit var graphContainer: LinearLayout
+
+    private lateinit var playerNameText: TextView
+    private lateinit var teamText: TextView
+    private lateinit var passingYardsText: TextView
+    private lateinit var passingTDText: TextView
+    private lateinit var completionsText: TextView
+    private lateinit var attemptsText: TextView
+    private lateinit var compPercentageText: TextView
+    private lateinit var interceptionsText: TextView
+    private lateinit var playerImage: ShapeableImageView
+
     private val database = FirebaseDatabase.getInstance().getReference("seasons")
+    private var playerSeasons: List<Player> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player_profile)
 
-        val playerNameText: TextView = findViewById(R.id.playerNameText)
-        val teamText: TextView = findViewById(R.id.teamText)
+        playerNameText = findViewById(R.id.playerNameText)
+        teamText = findViewById(R.id.teamText)
+        passingYardsText = findViewById(R.id.passingYardsText)
+        passingTDText = findViewById(R.id.passingTDText)
+        completionsText = findViewById(R.id.completionsText)
+        attemptsText = findViewById(R.id.attemptsText)
+        compPercentageText = findViewById(R.id.compPercentageText)
+        interceptionsText = findViewById(R.id.interceptionsText)
+        playerImage = findViewById(R.id.playerImage)
 
-        val playerImage: com.google.android.material.imageview.ShapeableImageView = findViewById(R.id.playerImage)
-
-        val passingYardsText: TextView = findViewById(R.id.passingYardsText)
-        val passingTDText: TextView = findViewById(R.id.passingTDText)
-        val completionsText: TextView = findViewById(R.id.completionsText)
-        val attemptsText: TextView = findViewById(R.id.attemptsText)
-        val compPercentageText: TextView = findViewById(R.id.compPercentageText)
-        val interceptionsText: TextView = findViewById(R.id.interceptionsText)
-        val tdValueLabel: TextView = findViewById(R.id.tdValueLabel)
-        val tdBar: View = findViewById(R.id.tdBar)
+        seasonSpinner = findViewById(R.id.seasonSpinner)
+        graphContainer = findViewById(R.id.graphContainer)
 
         val playerName = intent.getStringExtra("player_name") ?: "Unknown Player"
 
@@ -51,80 +73,160 @@ class PlayerProfileActivity : AppCompatActivity() {
                 }
 
                 if (matchingSeasons.isNotEmpty()) {
-                    val latestSeason =
-                        matchingSeasons.maxByOrNull { it.season } ?: matchingSeasons.first()
-
-                    playerNameText.text = latestSeason.name
-                    val fullTeamName = getTeamFullName(latestSeason.team)
-                    teamText.text = "$fullTeamName • ${latestSeason.season}"
-
-                    if (latestSeason.imageUrl.isNotEmpty()) {
-                        Glide.with(this@PlayerProfileActivity)
-                            .load(latestSeason.imageUrl)
-                            .diskCacheStrategy(com.bumptech.glide.load.engine.DiskCacheStrategy.ALL)
-                            .override(com.bumptech.glide.request.target.Target.SIZE_ORIGINAL)
-                            .into(playerImage)
-                    } else {
-                        playerImage.setImageDrawable(null)
-                    }
-
-                    passingYardsText.text = latestSeason.passingYards.toInt().toString()
-                    passingTDText.text = latestSeason.passingTouchdowns.toInt().toString()
-                    completionsText.text = latestSeason.passingCompletions.toInt().toString()
-                    attemptsText.text = latestSeason.passingAttempts.toInt().toString()
-                    compPercentageText.text =
-                        String.format("%.1f%%", latestSeason.completionPercentage)
-                    interceptionsText.text =
-                        latestSeason.passingInterceptions.toInt().toString()
-                    tdValueLabel.text =
-                        latestSeason.passingTouchdowns.toInt().toString()
-
-                    updateTdBar(latestSeason.passingTouchdowns.toInt(), tdBar)
-
-                } else {
+                    playerSeasons = matchingSeasons.sortedByDescending { it.season }
                     playerNameText.text = playerName
-                    teamText.text = "No data found"
-                    passingYardsText.text = "0"
-                    passingTDText.text = "0"
-                    completionsText.text = "0"
-                    attemptsText.text = "0"
-                    compPercentageText.text = "0.0%"
-                    interceptionsText.text = "0"
-                    tdValueLabel.text = "0"
-                    updateTdBar(0, tdBar)
+                    setupSeasonSpinner()
+                    renderCareerTdGraph()
+                } else {
+                    showEmptyState(playerName)
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                playerNameText.text = playerName
-                teamText.text = "Error loading data"
+                showEmptyState(playerName)
             }
         })
 
         setupNavigation()
     }
 
-    private fun updateTdBar(tdNumber: Int, tdBar: View) {
-        val maxTouchdowns = 60
-        val minBarHeightDp = 40
-        val maxBarHeightDp = 140
+    private fun setupSeasonSpinner() {
+        val seasonLabels = playerSeasons.map { it.season.toString() }
 
-        val scaledHeightDp = if (tdNumber <= 0) {
-            minBarHeightDp
+        val spinnerAdapter = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_item,
+            seasonLabels
+        )
+        spinnerAdapter.setDropDownViewResource(
+            android.R.layout.simple_spinner_dropdown_item
+        )
+
+        seasonSpinner.adapter = spinnerAdapter
+        seasonSpinner.setSelection(0)
+        updateSeasonStats(playerSeasons[0])
+
+        seasonSpinner.onItemSelectedListener =
+            object : android.widget.AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: android.widget.AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
+                ) {
+                    updateSeasonStats(playerSeasons[position])
+                }
+
+                override fun onNothingSelected(
+                    parent: android.widget.AdapterView<*>?
+                ) {
+                }
+            }
+    }
+
+    private fun updateSeasonStats(selectedSeason: Player) {
+        val fullTeamName = getTeamFullName(selectedSeason.team)
+        teamText.text = "$fullTeamName • ${selectedSeason.season}"
+
+        if (selectedSeason.imageUrl.isNotEmpty()) {
+            Glide.with(this@PlayerProfileActivity)
+                .load(selectedSeason.imageUrl)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .override(Target.SIZE_ORIGINAL)
+                .into(playerImage)
         } else {
-            val progress = (tdNumber.toFloat() / maxTouchdowns).coerceAtMost(1.0f)
-            minBarHeightDp + (progress * (maxBarHeightDp - minBarHeightDp)).toInt()
+            playerImage.setImageDrawable(null)
         }
 
-        val scaledHeightPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            scaledHeightDp.toFloat(),
-            resources.displayMetrics
-        ).toInt()
+        passingYardsText.text = selectedSeason.passingYards.toInt().toString()
+        passingTDText.text = selectedSeason.passingTouchdowns.toInt().toString()
+        completionsText.text = selectedSeason.passingCompletions.toInt().toString()
+        attemptsText.text = selectedSeason.passingAttempts.toInt().toString()
+        compPercentageText.text =
+            String.format("%.1f%%", selectedSeason.completionPercentage)
+        interceptionsText.text =
+            selectedSeason.passingInterceptions.toInt().toString()
+    }
 
-        val layoutParams = tdBar.layoutParams
-        layoutParams.height = scaledHeightPx
-        tdBar.layoutParams = layoutParams
+    private fun renderCareerTdGraph() {
+        graphContainer.removeAllViews()
+
+        val ascendingSeasons = playerSeasons.sortedBy { it.season }
+        val maxTouchdowns = ascendingSeasons
+            .maxOfOrNull { it.passingTouchdowns.toInt() }
+            ?.coerceAtLeast(1) ?: 1
+
+        for (season in ascendingSeasons) {
+            val column = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                gravity = Gravity.CENTER_HORIZONTAL or Gravity.BOTTOM
+                layoutParams = LinearLayout.LayoutParams(
+                    dpToPx(56),
+                    LinearLayout.LayoutParams.MATCH_PARENT
+                ).apply {
+                    marginEnd = dpToPx(10)
+                }
+            }
+
+            val valueText = TextView(this).apply {
+                text = season.passingTouchdowns.toInt().toString()
+                textSize = 12f
+                setTextColor(getColor(R.color.blue_primary))
+                setTypeface(typeface, android.graphics.Typeface.BOLD)
+                gravity = Gravity.CENTER
+            }
+
+            val tdCount = season.passingTouchdowns.toInt()
+            val barHeightDp = if (tdCount <= 0) {
+                12
+            } else {
+                val progress = tdCount.toFloat() / maxTouchdowns.toFloat()
+                (24 + progress * 120).toInt()
+            }
+
+            val barView = View(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    dpToPx(28),
+                    dpToPx(barHeightDp)
+                ).apply {
+                    topMargin = dpToPx(8)
+                }
+                setBackgroundColor(getColor(R.color.blue_primary))
+            }
+
+            val yearText = TextView(this).apply {
+                text = season.season.toString()
+                textSize = 12f
+                gravity = Gravity.CENTER
+                setTextColor(getColor(android.R.color.darker_gray))
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply {
+                    topMargin = dpToPx(8)
+                }
+            }
+
+            column.addView(valueText)
+            column.addView(barView)
+            column.addView(yearText)
+
+            graphContainer.addView(column)
+        }
+    }
+
+    private fun showEmptyState(playerName: String) {
+        playerNameText.text = playerName
+        teamText.text = "No data found"
+        passingYardsText.text = "0"
+        passingTDText.text = "0"
+        completionsText.text = "0"
+        attemptsText.text = "0"
+        compPercentageText.text = "0.0%"
+        interceptionsText.text = "0"
+        playerImage.setImageDrawable(null)
+        seasonSpinner.isEnabled = false
+        graphContainer.removeAllViews()
     }
 
     private fun setupNavigation() {
@@ -175,28 +277,36 @@ class PlayerProfileActivity : AppCompatActivity() {
             "DAL" -> "Cowboys"
             "DEN" -> "Broncos"
             "DET" -> "Lions"
-            "GB"  -> "Packers"
+            "GB" -> "Packers"
             "HOU" -> "Texans"
             "IND" -> "Colts"
             "JAX" -> "Jaguars"
-            "KC"  -> "Chiefs"
+            "KC" -> "Chiefs"
             "LAC", "SD" -> "Chargers"
             "LAR", "STL" -> "Rams"
-            "LV", "OAK"  -> "Raiders"
+            "LV", "OAK" -> "Raiders"
             "MIA" -> "Dolphins"
             "MIN" -> "Vikings"
-            "NE"  -> "Patriots"
-            "NO"  -> "Saints"
+            "NE" -> "Patriots"
+            "NO" -> "Saints"
             "NYG" -> "Giants"
             "NYJ" -> "Jets"
             "PHI" -> "Eagles"
             "PIT" -> "Steelers"
-            "SF"  -> "49ers"
+            "SF" -> "49ers"
             "SEA" -> "Seahawks"
-            "TB"  -> "Buccaneers"
+            "TB" -> "Buccaneers"
             "TEN" -> "Titans"
             "WAS" -> "Commanders"
             else -> initials ?: "Team Unknown"
         }
+    }
+
+    private fun dpToPx(dp: Int): Int {
+        return TypedValue.applyDimension(
+            TypedValue.COMPLEX_UNIT_DIP,
+            dp.toFloat(),
+            resources.displayMetrics
+        ).toInt()
     }
 }
