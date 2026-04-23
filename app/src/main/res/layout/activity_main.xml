@@ -6,99 +6,104 @@
     android:orientation="vertical"
     android:background="?android:attr/windowBackground">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingTop="96dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="16dp">
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/titleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Football Stats"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/subtitleText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp"
-            android:text="Search players, compare stats, and view leaders"
-            android:textColor="?android:attr/textColorSecondary"
-            android:textSize="15sp" />
-
-        <TextView
-            android:id="@+id/searchLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="32dp"
-            android:text="Find a player"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <AutoCompleteTextView
-            android:id="@+id/searchEditText"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/search_bar_background"
-            android:dropDownHeight="wrap_content"
-            android:dropDownVerticalOffset="8dp"
-            android:dropDownWidth="match_parent"
-            android:hint="Search NFL player"
-            android:inputType="text"
-            android:minHeight="56dp"
-            android:padding="16dp"
-            android:popupBackground="?attr/colorSurface"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textColorHint="?android:attr/textColorSecondary"
-            android:focusable="false"
-            android:focusableInTouchMode="false"/>
+            android:orientation="vertical"
+            android:paddingStart="16dp"
+            android:paddingTop="96dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp">
 
-        <Button
-            android:id="@+id/searchButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="#1E3A8A"
-            android:minHeight="48dp"
-            android:text="Search"
-            android:textColor="@android:color/white" />
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="Football Stats"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="30sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/featuredLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="52dp"
-            android:layout_marginBottom="16dp"
-            android:text="Featured players"
-            android:textColor="?android:attr/textColorPrimary"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/subtitleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:text="Search players, compare stats, and view leaders"
+                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="15sp" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/featuredRecyclerView"
-            android:layout_width="wrap_content"
-            android:layout_height="220dp"
-            android:layout_gravity="center_horizontal"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:paddingStart="0dp"
-            android:paddingEnd="0dp" />
+            <TextView
+                android:id="@+id/searchLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="32dp"
+                android:text="Find a player"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
 
-    </LinearLayout>
+            <AutoCompleteTextView
+                android:id="@+id/searchEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/search_bar_background"
+                android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="8dp"
+                android:dropDownWidth="match_parent"
+                android:hint="Search NFL player"
+                android:inputType="text"
+                android:minHeight="56dp"
+                android:padding="16dp"
+                android:popupBackground="?attr/colorSurface"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textColorHint="?android:attr/textColorSecondary"
+                android:focusable="false"
+                android:focusableInTouchMode="false" />
+
+            <Button
+                android:id="@+id/searchButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="#1E3A8A"
+                android:minHeight="48dp"
+                android:text="Search"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/featuredLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="52dp"
+                android:layout_marginBottom="16dp"
+                android:text="Featured players"
+                android:textColor="?android:attr/textColorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/featuredRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+
+        </LinearLayout>
+    </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
