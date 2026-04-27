@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/nav_home"
-        android:icon="@android:drawable/ic_menu_view"
+        android:icon="@drawable/home"
         android:title="Home" />
 
     <item
@@ -13,12 +13,12 @@
 
     <item
         android:id="@+id/nav_players"
-        android:icon="@android:drawable/ic_menu_myplaces"
+        android:icon="@drawable/player"
         android:title="Players" />
 
     <item
         android:id="@+id/nav_compare"
-        android:icon="@android:drawable/ic_menu_share"
+        android:icon="@drawable/vs"
         android:title="Compare" />
 
     <item
